@@ -5,15 +5,12 @@
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- Sertakan folder atau file tertentu untuk dicadangkan -->
+        <include domain="file" path="relative/path/to/file_or_folder" />
+        <include domain="database" name="user_data.db" />
+
+        <!-- Kecualikan folder atau file tertentu dari pencadangan -->
+        <exclude domain="sharedpref" path="shared_prefs_to_exclude.xml" />
+        <exclude domain="cache" />
     </cloud-backup>
-    <!--
-    <device-transfer>
-        <include .../>
-        <exclude .../>
-    </device-transfer>
-    -->
 </data-extraction-rules>
