@@ -3,14 +3,15 @@
    See https://developer.android.com/about/versions/12/backup-restore#xml-changes
    for details.
 -->
-<data-extraction-rules>
+<data-extraction-rules xmlns:tools="http://schemas.android.com/tools">
     <cloud-backup>
         <!-- Sertakan folder atau file tertentu untuk dicadangkan -->
         <include domain="file" path="relative/path/to/file_or_folder" />
         <include domain="database" name="user_data.db" />
 
         <!-- Kecualikan folder atau file tertentu dari pencadangan -->
-        <exclude domain="sharedpref" path="shared_prefs_to_exclude.xml" />
+        <exclude domain="sharedpref" path="shared_prefs_to_exclude.xml"
+            tools:ignore="FullBackupContent" />
         <exclude domain="cache" />
     </cloud-backup>
 </data-extraction-rules>
