@@ -34,12 +34,13 @@
         <!-- Image inside button -->
 
         <!-- Text below image -->
+
         <ImageView
             android:id="@+id/imageButton1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/plus" />
+            android:src="@drawable/add_circle_svgrepo_com__1_" />
 
         <TextView
             android:id="@+id/textButton1"
@@ -73,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/histori" />
+            android:src="@drawable/history_svgrepo_com" />
 
         <!-- Text below image -->
         <TextView
@@ -109,7 +110,7 @@
         <ImageView
             android:id="@+id/imageButton3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="57dp"
             android:layout_gravity="center"
             android:src="@drawable/product" />
 
@@ -148,7 +149,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/akun" />
+            android:src="@drawable/account_settings_svgrepo_com" />
 
         <TextView
             android:id="@+id/textButton4"
