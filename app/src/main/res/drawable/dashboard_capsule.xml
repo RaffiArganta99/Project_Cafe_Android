@@ -1,0 +1,19 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Bayangan hitam di luar kapsul -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#000000"/> <!-- Warna bayangan hitam -->
+            <corners android:radius="133.2dp"/> <!-- Setengah dari tinggi kapsul untuk membuat bentuk lonjong -->
+        </shape>
+    </item>
+
+    <!-- Kapsul -->
+    <item android:left="2dp" android:right="2dp" android:top="2dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF"/> <!-- Warna kapsul -->
+            <corners android:radius="133.2dp"/> <!-- Sama dengan sudut bayangan untuk membuat kapsul -->
+        </shape>
+    </item>
+
+</layer-list>

@@ -8,16 +8,27 @@
     android:background="#FFFFFF"
     tools:context=".LoginActivity">
 
+    <ImageButton
+        android:id="@+id/imageView3"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="363dp"
+        android:background="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/return15" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="290dp"
         android:layout_height="140dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="120dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
         app:srcCompat="@drawable/hey_welcome_back_" />
 
     <EditText
@@ -29,7 +40,7 @@
         android:drawableLeft="@drawable/ic_email"
         android:drawablePadding="12dp"
         android:ems="10"
-        android:fontFamily="@font/sansation_regular"
+        android:fontFamily="sans-serif"
         android:hint="Email"
         android:inputType="textEmailAddress"
         android:paddingStart="24dp"
@@ -48,7 +59,7 @@
         android:drawableLeft="@drawable/ic_lock"
         android:drawablePadding="12dp"
         android:ems="10"
-        android:fontFamily="@font/sansation_regular"
+        android:fontFamily="sans-serif"
         android:hint="Password"
         android:inputType="textPassword"
         android:paddingStart="24dp"
@@ -62,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="200dp"
         android:layout_marginTop="4dp"
-        android:fontFamily="@font/sansation_regular"
+        android:fontFamily="sans-serif"
         android:text="Forgot Password?"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/editTextTextPassword"
@@ -71,18 +82,45 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button"
+        android:id="@+id/loginbutton"
         android:layout_width="300dp"
         android:layout_height="65dp"
         android:layout_marginTop="60dp"
         android:background="@drawable/backgroud_black"
-        android:fontFamily="@font/sansation_regular"
+        android:fontFamily="sans-serif"
         android:text="LOGIN"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
+
+    <TextView
+        android:id="@+id/donthavebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Doesnt have Account? Sign Up"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/button2"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="@+id/button2"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="Or continue with"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginbutton" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button2"
@@ -90,34 +128,12 @@
         android:layout_height="60dp"
         android:layout_marginTop="48dp"
         android:background="@drawable/background_putih"
-        android:fontFamily="@font/sansation_regular"
+        android:fontFamily="sans-serif"
         android:text="GOOGLE"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/loginbutton" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/sansation_regular"
-        android:text="Or continue with"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:fontFamily="@font/sansation_regular"
-        android:text="Doesnt have Account? Sign Up"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/button2"
-        app:layout_constraintStart_toStartOf="@+id/button2"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
