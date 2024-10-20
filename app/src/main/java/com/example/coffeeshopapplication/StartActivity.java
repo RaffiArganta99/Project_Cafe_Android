@@ -2,25 +2,24 @@ package com.example.coffeeshopapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.coffeeshopapplication.databinding.ActivityStartBinding;
 
 public class StartActivity extends AppCompatActivity {
-    private ActivityStartBinding binding;
+
+    private static final int SPLASH_DISPLAY_LENGTH = 3000; // 3 seconds delay
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityStartBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_start); // Ensure this layout exists
 
-        binding.button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
+        // Delay for the splash screen before starting LoginActivity
+        new Handler().postDelayed(() -> {
+            // Start LoginActivity after the splash screen
+            Intent mainIntent = new Intent(StartActivity.this, LoginActivity.class);
+            startActivity(mainIntent);
+            finish(); // Close StartActivity so user can't go back to it
+        }, SPLASH_DISPLAY_LENGTH);
     }
 }

@@ -2,5 +2,9 @@
 <resources>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="grey">#F1EDED</color>
+
+    <!-- Define your app's primary colors -->
+    <color name="colorPrimary">#FF6200EE</color> <!-- Example primary color -->
+    <color name="colorPrimaryDark">#FF3700B3</color> <!-- Example primary dark color -->
+    <color name="colorAccent">#FF03DAC5</color> <!-- Example accent color -->
 </resources>
