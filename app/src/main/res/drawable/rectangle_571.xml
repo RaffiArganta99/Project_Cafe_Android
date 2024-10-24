@@ -4,7 +4,7 @@
     <!-- Ukuran persegi panjang -->
     <size
         android:width="412dp"
-        android:height="248dp"/>
+        android:height="198.4dp"/>
 
     <!-- Sudut melengkung hanya di bagian bawah -->
     <corners

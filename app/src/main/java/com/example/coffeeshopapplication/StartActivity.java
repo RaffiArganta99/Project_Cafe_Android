@@ -3,6 +3,7 @@ package com.example.coffeeshopapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class StartActivity extends AppCompatActivity {
@@ -13,6 +14,13 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start); // Ensure this layout exists
+
+        // Menyembunyikan status bar (System UI)
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
 
         // Delay for the splash screen before starting LoginActivity
         new Handler().postDelayed(() -> {

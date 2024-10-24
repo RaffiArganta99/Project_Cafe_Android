@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+
 import com.example.coffeeshopapplication.databinding.ActivityLogin2Binding;
 
 public class LoginActivity extends AppCompatActivity {
@@ -18,10 +20,11 @@ public class LoginActivity extends AppCompatActivity {
         binding.loginbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SignActivity.class);
+                Intent intent = new Intent(LoginActivity.this, FragmentMainActivity.class);
                 startActivity(intent);
             }
         });
+
         binding.donthavebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
