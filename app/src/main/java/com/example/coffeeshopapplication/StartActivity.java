@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class StartActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DISPLAY_LENGTH = 3000; // 3 seconds delay
+    private static final int SPLASH_DISPLAY_LENGTH = 200; // 3 seconds delay
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

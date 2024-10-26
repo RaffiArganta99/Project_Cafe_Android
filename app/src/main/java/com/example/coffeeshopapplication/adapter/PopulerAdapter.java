@@ -1,67 +1,70 @@
 package com.example.coffeeshopapplication.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.coffeeshopapplication.databinding.PopulerItemBinding;
+
+import com.example.coffeeshopapplication.R;
 
 import java.util.List;
 
-public class PopulerAdapter extends RecyclerView.Adapter<PopulerAdapter.ProductViewHolder> {
-    private List<String> items; // Nama item/produk
-    private List<Integer> sold; // Jumlah terjual
-    private List<Integer> images; // Gambar produk
+public class PopulerAdapter extends RecyclerView.Adapter<PopulerAdapter.ItemViewHolder> {
 
-    // Constructor untuk menerima data dari Activity/Fragment
-    public PopulerAdapter(List<String> items, List<Integer> sold, List<Integer> images) {
-        this.items = items;
-        this.sold = sold;
-        this.images = images;
+    private Context context;
+    private List<String> itemNames;      // Nama produk
+    private List<Integer> itemImages;    // Gambar produk
+    private List<Integer> itemSold;      // Jumlah terjual
+
+    public PopulerAdapter(Context context, List<String> itemNames, List<Integer> itemImages, List<Integer> itemSold) {
+        this.context = context;
+        this.itemNames = itemNames;
+        this.itemImages = itemImages;
+        this.itemSold = itemSold;
     }
 
-    // Method untuk meng-inflate layout XML dari item_recyclerview.xml
     @NonNull
     @Override
-    public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        PopulerItemBinding binding = PopulerItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-        return new ProductViewHolder(binding);
+    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(context).inflate(R.layout.populer_item, parent, false);
+        return new ItemViewHolder(itemView);
     }
 
-    // Menghubungkan data dengan ViewHolder pada posisi tertentu
     @Override
-    public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        String itemName = items.get(position); // Nama produk
-        int itemSold = sold.get(position); // Jumlah terjual
-        int itemImage = images.get(position); // Gambar produk
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+        String itemName = itemNames.get(position);
+        int itemImage = itemImages.get(position);
+        int sold = itemSold.get(position);
 
-        // Memanggil fungsi bind() untuk mengisi tampilan sesuai data
-        holder.bind(itemName, itemSold, itemImage);
+        holder.bind(itemName, itemImage, sold);
     }
 
-    // Mengembalikan jumlah item dalam RecyclerView
     @Override
     public int getItemCount() {
-        return items.size();
+        return itemNames.size();
     }
 
-    // ViewHolder untuk memegang referensi tampilan tiap item
-    public static class ProductViewHolder extends RecyclerView.ViewHolder {
-        private PopulerItemBinding binding; // Binding ke layout XML
-        private ImageView imageView;
+    // ViewHolder untuk Item Produk
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
+        TextView itemName, itemSold;
+        ImageView imageView;
 
-        public ProductViewHolder(PopulerItemBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-            this.imageView = binding.imageView5; // Mengambil referensi dari layout
+        public ItemViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemName = itemView.findViewById(R.id.textView5);   // Nama produk
+            itemSold = itemView.findViewById(R.id.itemSold);    // Jumlah terjual
+            imageView = itemView.findViewById(R.id.imageView5); // Gambar produk
         }
 
-        // Method bind() untuk mengisi tampilan sesuai dengan data
-        public void bind(String item, int sold, int imageRes) {
-            binding.itemName.setText(item); // Menampilkan nama produk
-            binding.itemSold.setText("Sold: " + sold); // Menampilkan jumlah terjual
-            imageView.setImageResource(imageRes); // Menampilkan gambar produk
+        public void bind(String name, int imageResId, int sold) {
+            itemName.setText(name);
+            itemSold.setText(String.valueOf(sold));
+            imageView.setImageResource(imageResId);
         }
     }
 }
