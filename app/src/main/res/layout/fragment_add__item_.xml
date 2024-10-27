@@ -1,14 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Add_Item_Fragment">
+    android:background="#F6F5F5"
+    tools:context=".AddItemActivity">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <!-- Black Background Section at the Top -->
+        <View
+            android:id="@+id/topBackground"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Return Button at the Top Left -->
+
+        <!-- Notification Button at the Top Right -->
+
+        <!-- Title Text in the Black Background -->
+
+
+        <ImageButton
+            android:id="@+id/NotifButton"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/notification"
+            android:contentDescription="Return"
+            android:src="@drawable/backward"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.959"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/returnButton"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/backward"
+            android:contentDescription="Return"
+            android:src="@drawable/backward"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/sansation_bold"
+            android:gravity="center"
+            android:text="Add Product"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@id/topBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/topBackground"
+            app:layout_constraintVertical_bias="0.059" />
+
+        <!-- CardView with ImageView inside, background set to black -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/imageCard"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleTextView">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:src="@drawable/gambar_makanan"
+                android:scaleType="centerCrop" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Select Image Text Field Below the Black Section -->
+        <TextView
+            android:id="@+id/selectImageTextView"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/persegi_panjang"
+            android:drawableLeft="@drawable/add_image"
+            android:drawablePadding="9dp"
+            android:fontFamily="@font/sansation_bold"
+            android:gravity="center_vertical"
+            android:paddingLeft="15dp"
+            android:text="Select Image"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topBackground" />
+
+        <!-- Name EditText Below Select Image Text Field -->
+        <EditText
+            android:id="@+id/editTextText"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/persegi_panjang"
+            android:drawableLeft="@drawable/pencil"
+            android:drawablePadding="9dp"
+            android:fontFamily="@font/sansation_bold"
+            android:inputType="text"
+            android:paddingLeft="15dp"
+            android:text="Name"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/selectImageTextView"
+            app:layout_constraintStart_toStartOf="@id/selectImageTextView"
+            app:layout_constraintTop_toBottomOf="@id/selectImageTextView" />
+
+        <!-- Price EditText Below Name EditText -->
+        <EditText
+            android:id="@+id/editTextText2"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/persegi_panjang"
+            android:drawableLeft="@drawable/price_tag"
+            android:drawablePadding="9dp"
+            android:fontFamily="@font/sansation_bold"
+            android:inputType="text"
+            android:paddingLeft="15dp"
+            android:text="Price"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/editTextText"
+            app:layout_constraintStart_toStartOf="@id/editTextText"
+            app:layout_constraintTop_toBottomOf="@id/editTextText" />
+
+        <!-- Stock EditText Below Price EditText -->
+        <EditText
+            android:id="@+id/editTextText5"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/persegi_panjang"
+            android:drawableLeft="@drawable/sell_stock"
+            android:drawablePadding="9dp"
+            android:fontFamily="@font/sansation_bold"
+            android:inputType="text"
+            android:paddingLeft="15dp"
+            android:text="Stock"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/editTextText2"
+            app:layout_constraintStart_toStartOf="@id/editTextText2"
+            app:layout_constraintTop_toBottomOf="@id/editTextText2" />
+
+        <!-- Add Button Below Stock EditText -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button4"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/persegi_hitamn"
+            android:fontFamily="@font/sansation_bold"
+            android:text="Add"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@id/editTextText5"
+            app:layout_constraintStart_toStartOf="@id/editTextText5"
+            app:layout_constraintTop_toBottomOf="@id/editTextText5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
