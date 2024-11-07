@@ -5,20 +5,25 @@
         android:id="@+id/home_nav"
         android:icon="@drawable/home"
         android:title="Home"/>
+
     <item
         android:id="@+id/add_nav"
-        android:icon="@drawable/add_p"
+        android:icon="@drawable/default_image"
         android:title="Add"/>
+
     <item
         android:id="@+id/product_nav"
         android:icon="@drawable/basket"
         android:title="Product"/>
+
     <item
         android:id="@+id/list_nav"
         android:icon="@drawable/histori"
         android:title="List"/>
+
     <item
         android:id="@+id/profile_nav"
         android:icon="@drawable/akun"
         android:title="Profile"/>
+
 </menu>

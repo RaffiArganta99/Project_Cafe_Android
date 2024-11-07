@@ -53,7 +53,7 @@
                 android:layout_marginTop="24dp"
                 android:background="@drawable/persegi_panjang"
                 android:drawableLeft="@drawable/add_image"
-                android:drawableRight="@drawable/add_p"
+                android:drawableRight="@drawable/default_image"
                 android:drawablePadding="9dp"
                 android:fontFamily="@font/sansation_bold"
                 android:gravity="center_vertical"

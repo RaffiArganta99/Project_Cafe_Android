@@ -6,6 +6,7 @@
         <item>@font/alexandria_extralight</item>
         <item>@font/alexandria_light</item>
         <item>@font/alexandria_medium</item>
+        <item>@font/alexandria_semibold</item>
         <item>@font/alexandria_thin</item>
     </array>
 </resources>

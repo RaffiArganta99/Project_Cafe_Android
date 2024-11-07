@@ -28,7 +28,7 @@ public class FragmentMainActivity extends AppCompatActivity {
             if (id == R.id.home_nav) {
                 replaceFragment(new HomeFragment());
             } else if (id == R.id.product_nav) {
-                replaceFragment(new Product_Fragment());
+                replaceFragment(new CartFragment());
             } else if (id == R.id.add_nav) {
                 replaceFragment(new Add_Item_Fragment());
             } else if (id == R.id.list_nav) {

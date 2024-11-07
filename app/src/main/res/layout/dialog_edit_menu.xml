@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="261dp"
+        android:layout_height="422.1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <ImageButton
+                android:id="@+id/CancelButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/cancel_svgrepo_com" />
+
+            <ImageView
+                android:id="@+id/editMenuImage"
+                android:layout_width="103.932dp"
+                android:layout_height="114.066dp"
+                android:layout_marginTop="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <EditText
+                android:id="@+id/editMenuName"
+                android:layout_width="233.1dp"
+                android:layout_height="36.9dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/capsule_edit_black"
+                android:drawableLeft="@drawable/pencil_svgrepo_com__1_"
+                android:drawablePadding="9dp"
+                android:ems="10"
+                android:fontFamily="@font/sansation_regular"
+                android:hint="Nama"
+                android:inputType="text"
+                android:paddingLeft="15dp"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@+id/changeImageButton"
+                app:layout_constraintStart_toStartOf="@+id/changeImageButton"
+                app:layout_constraintTop_toBottomOf="@+id/changeImageButton" />
+
+            <EditText
+                android:id="@+id/editMenuPrice"
+                android:layout_width="233.1dp"
+                android:layout_height="36.9dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/capsule_edit_black"
+                android:drawableLeft="@drawable/price_tag_svgrepo_com"
+                android:drawablePadding="6dp"
+                android:ems="10"
+                android:fontFamily="@font/sansation_regular"
+                android:hint="Harga"
+                android:inputType="text"
+                android:paddingLeft="14dp"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@+id/editMenuName"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/editMenuName"
+                app:layout_constraintTop_toBottomOf="@+id/editMenuName" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/confirmButton"
+                android:layout_width="159.741dp"
+                android:layout_height="37.152dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/black_capsule_2"
+                android:text="Konfirmasi"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@+id/editMenuPrice"
+                app:layout_constraintStart_toStartOf="@+id/editMenuPrice"
+                app:layout_constraintTop_toBottomOf="@+id/editMenuPrice" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/changeImageButton"
+                android:layout_width="233.1dp"
+                android:layout_height="36.9dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/capsule_edit_black"
+                android:drawableLeft="@drawable/image_plus_svgrepo_com"
+                android:drawableRight="@drawable/plus_circle_svgrepo_com"
+                android:drawablePadding="9dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="Gambar"
+                android:textAllCaps="false"
+                app:layout_constraintEnd_toEndOf="@+id/editMenuImage"
+                app:layout_constraintStart_toStartOf="@+id/editMenuImage"
+                app:layout_constraintTop_toBottomOf="@+id/editMenuImage" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

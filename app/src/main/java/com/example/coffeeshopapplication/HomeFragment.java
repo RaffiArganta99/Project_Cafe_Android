@@ -58,5 +58,9 @@ public class HomeFragment extends Fragment {
         itemNames.add("Milk");
         itemImages.add(R.drawable.menu3); // Ganti dengan ID gambar yang sesuai
         itemSold.add(40);
+
+        itemNames.add("Water");
+        itemImages.add(R.drawable.menu4); // Ganti dengan ID gambar yang sesuai
+        itemSold.add(40);
     }
 }
