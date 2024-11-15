@@ -2,6 +2,7 @@ package com.example.coffeeshopapplication.adapter;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,36 +10,38 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.coffeeshopapplication.EditMenuDialogFragment;
+import com.example.coffeeshopapplication.Interface_API.ApiService;
+import com.example.coffeeshopapplication.Product;
+import com.example.coffeeshopapplication.R;
+import com.example.coffeeshopapplication.Retrofit.ApiClient;
 import com.example.coffeeshopapplication.databinding.CartItemBinding;
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
     private final Context context;
-    private final ArrayList<String> cartItems;
-    private final ArrayList<String> cartItemPrices;
-    private final ArrayList<Uri> cartImages;
-    private int[] itemQuantities;
+    private final ArrayList<Product> cartItems; // Menggunakan ArrayList<Product> daripada ArrayList<String>
     private final OnAddToCartClickListener listener;
+    private final ApiService apiService;
 
-    // Interface untuk listener
     public interface OnAddToCartClickListener {
         void onAddToCart(String name, String price, int quantity);
     }
 
-    // Constructor `CartAdapter` dengan listener
-    public CartAdapter(Context context, ArrayList<String> cartItems, ArrayList<String> cartItemPrices, ArrayList<Uri> cartImages, OnAddToCartClickListener listener) {
+    public CartAdapter(Context context, ArrayList<Product> cartItems, OnAddToCartClickListener listener) {
         this.context = context;
         this.cartItems = cartItems;
-        this.cartItemPrices = cartItemPrices;
-        this.cartImages = cartImages;
         this.listener = listener;
-        this.itemQuantities = new int[cartItems.size()];
 
-        // Set initial quantity for each item to 1
-        for (int i = 0; i < itemQuantities.length; i++) {
-            itemQuantities[i] = 1;
-        }
+        // Inisialisasi ApiService hanya sekali
+        this.apiService = ApiClient.getApiService(); // Menggunakan ApiClient untuk mendapatkan ApiService
     }
 
     @NonNull
@@ -58,10 +61,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return cartItems.size();
     }
 
-    // Fungsi untuk memperbarui gambar item di cart
-    public void setImageForCartItem(Uri selectedImageUri, int position) {
-        cartImages.set(position, selectedImageUri);
-        notifyItemChanged(position);
+    // Method untuk mengupdate daftar cart
+    public void updateCartItems(List<Product> newCartItems) {
+        this.cartItems.clear();
+        this.cartItems.addAll(newCartItems);
+        notifyDataSetChanged(); // Update RecyclerView
     }
 
     // ViewHolder class
@@ -72,18 +76,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             super(binding.getRoot());
             this.binding = binding;
 
-            // Set listener untuk "Keranjang" button
             binding.ItemCart.setOnClickListener(view -> {
                 int position = getAdapterPosition();
-                String name = cartItems.get(position);
-                String price = cartItemPrices.get(position);
-                int quantity = itemQuantities[position];
-
-                // Panggil listener untuk mengirim data ke activity
-                listener.onAddToCart(name, price, quantity);
+                Product product = cartItems.get(position);
+                listener.onAddToCart(product.getName(), String.valueOf(product.getPrice()), product.getQuantity());
             });
 
-            // Set click listeners untuk tombol-tombol lainnya
             binding.minusButton.setOnClickListener(view -> decreaseQuantity(getAdapterPosition()));
             binding.plusButton.setOnClickListener(view -> increaseQuantity(getAdapterPosition()));
             binding.deleteButton.setOnClickListener(view -> deleteItem(getAdapterPosition()));
@@ -91,73 +89,92 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         }
 
         public void bind(int position) {
-            String itemName = cartItems.get(position);
-            String itemPrice = cartItemPrices.get(position);
-            Uri itemImage = cartImages.get(position);
-            int quantity = itemQuantities[position];
+            Product product = cartItems.get(position);
 
-            binding.cartFoodName.setText(itemName);
-            binding.cartItemPrice.setText(itemPrice);
+            binding.cartFoodName.setText(product.getName());
+            binding.cartItemPrice.setText(String.valueOf(product.getPrice()));
+            Uri itemImage = Uri.parse(product.getImageUri());
 
-            // Tampilkan gambar dari URI jika tersedia, atau gunakan placeholder jika tidak
             if (itemImage != null) {
                 binding.cartImage.setImageURI(itemImage);
             } else {
-                binding.cartImage.setImageResource(com.example.coffeeshopapplication.R.drawable.default_image); // Placeholder jika URI null
+                binding.cartImage.setImageResource(R.drawable.default_image); // Ganti dengan default image Anda
             }
 
-            binding.cartItemQuantity.setText(String.valueOf(quantity));
+            binding.cartItemQuantity.setText(String.valueOf(product.getQuantity()));
         }
 
-        // Method untuk mengurangi jumlah
         private void decreaseQuantity(int position) {
-            if (itemQuantities[position] > 1) {
-                itemQuantities[position]--;
-                binding.cartItemQuantity.setText(String.valueOf(itemQuantities[position]));
+            Product product = cartItems.get(position);
+            if (product.getQuantity() > 1) {
+                product.setQuantity(product.getQuantity() - 1);
+                binding.cartItemQuantity.setText(String.valueOf(product.getQuantity()));
+                updateCartItemToApi(position);
             }
         }
 
-        // Method untuk menambah jumlah
         private void increaseQuantity(int position) {
-            if (itemQuantities[position] < 40) {
-                itemQuantities[position]++;
-                binding.cartItemQuantity.setText(String.valueOf(itemQuantities[position]));
+            Product product = cartItems.get(position);
+            if (product.getQuantity() < 40) {
+                product.setQuantity(product.getQuantity() + 1);
+                binding.cartItemQuantity.setText(String.valueOf(product.getQuantity()));
+                updateCartItemToApi(position);
             }
         }
 
-        // Method untuk menghapus item
         private void deleteItem(int position) {
-            if (position >= 0 && position < cartItems.size()) {
-                cartItems.remove(position);
-                cartImages.remove(position);
-                cartItemPrices.remove(position);
-
-                int[] newQuantities = new int[itemQuantities.length - 1];
-                for (int i = 0, j = 0; i < itemQuantities.length; i++) {
-                    if (i != position) {
-                        newQuantities[j++] = itemQuantities[i];
+            Product product = cartItems.get(position);
+            apiService.deleteCartItem(product.getId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        cartItems.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, cartItems.size());
                     }
                 }
-                itemQuantities = newQuantities;
 
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, cartItems.size());
-            }
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.e("CartAdapter", "Failed to delete item from API: " + t.getMessage());
+                }
+            });
         }
 
-        // Method untuk membuka dialog edit
         private void openEditDialog(int position) {
-            Uri imageResourceId = cartImages.get(position);
+            Product product = cartItems.get(position);
 
             EditMenuDialogFragment dialog = new EditMenuDialogFragment((name, price, newImageUri) -> {
-                cartItems.set(position, name);
-                cartItemPrices.set(position, price);
-                cartImages.set(position, newImageUri);
+                product.setName(name);
+                product.setPrice(Integer.parseInt(price));
+                product.setImageUri(newImageUri.toString());
                 notifyItemChanged(position);
-            }, imageResourceId);
+                updateCartItemToApi(position);
+            }, Uri.parse(product.getImageUri()));
 
             dialog.show(((AppCompatActivity) context).getSupportFragmentManager(), "EditMenuDialog");
         }
-    }
 
+        private void updateCartItemToApi(int position) {
+            Product product = cartItems.get(position);
+
+            apiService.updateCartItem(product.getId(), product).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("CartAdapter", "Item updated in API successfully");
+                    } else {
+                        Log.e("CartAdapter", "Failed to update item in API");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.e("CartAdapter", "Error updating item in API: " + t.getMessage());
+                }
+            });
+        }
+    }
 }
+
+

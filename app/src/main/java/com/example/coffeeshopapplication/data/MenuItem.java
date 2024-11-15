@@ -1,6 +1,6 @@
 package com.example.coffeeshopapplication.data;
 
-public class getDataMenu {
+public class MenuItem {
     String MenuId;
     String MenuName;
     String Description;
