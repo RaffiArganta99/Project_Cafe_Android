@@ -1,14 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Profile_Fragment">
+    tools:context=".Profile_Fragment"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="92dp">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- Gambar Latar Belakang -->
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="0dp"
+        android:layout_height="146dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/rectangle_573"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Tombol Edit Profil -->
+
+    <!-- Tombol Add Account -->
+
+    <!-- Tombol Log Out -->
+
+    <!-- Teks Judul -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/UploadImageButton"
+        android:layout_width="318.672dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="140dp"
+        android:background="@drawable/persegi_panjang"
+        android:drawableLeft="@drawable/pencil_svgrepo_com__1_"
+        android:drawablePadding="9dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Edit profile"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageView2" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/addAccountButton"
+        android:layout_width="318.672dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/persegi_panjang"
+        android:drawableLeft="@drawable/add_user_svgrepo_com"
+        android:drawablePadding="9dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Add Account"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/UploadImageButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/LogoutButton"
+        android:layout_width="318.672dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/persegi_panjang"
+        android:drawableLeft="@drawable/log_out_circle_svgrepo_com"
+        android:drawablePadding="9dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="Log Out"
+        android:textAllCaps="false"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addAccountButton"
+        app:layout_constraintVertical_bias="0.0" />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/alexandria_bold"
+        android:text="Profil"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/imageView2"
+        app:layout_constraintEnd_toEndOf="@id/imageView2"
+        app:layout_constraintStart_toStartOf="@id/imageView2"
+        app:layout_constraintTop_toTopOf="@id/imageView2"
+        app:layout_constraintVertical_bias="0.3" />
 
-</FrameLayout>
+    <!-- Gambar Profil Lingkaran -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileImageView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/profil"
+        app:layout_constraintEnd_toEndOf="@id/imageView2"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="@id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+
+    <!-- TextView Hitam -->
+    <TextView
+        android:id="@+id/blackTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/alexandria_semibold"
+        android:text="Ray Sdegma"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@id/profileImageView"
+        app:layout_constraintStart_toStartOf="@id/profileImageView"
+        app:layout_constraintTop_toBottomOf="@id/profileImageView" />
+
+    <!-- TextView Abu-Abu -->
+    <TextView
+        android:id="@+id/grayTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/alexandria_semibold"
+        android:text="Ray@gmail.com"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@id/blackTextView"
+        app:layout_constraintHorizontal_bias="0.538"
+        app:layout_constraintStart_toStartOf="@id/blackTextView"
+        app:layout_constraintTop_toBottomOf="@id/blackTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
