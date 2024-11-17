@@ -1,23 +1,7 @@
 package com.example.coffeeshopapplication;
 
-import android.content.Intent;
+import android.content.Intent;  // Mengimpor Intent sekali saja
 import android.net.Uri;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import com.example.coffeeshopapplication.Interface_API.ApiService;
-import com.example.coffeeshopapplication.Retrofit.ApiClient;
-import com.example.coffeeshopapplication.adapter.CartAdapter;
-import com.example.coffeeshopapplication.databinding.FragmentProductBinding;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,15 +11,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import com.example.coffeeshopapplication.Interface_API.ApiService;
+import com.example.coffeeshopapplication.Model.MenuResponse;
+import com.example.coffeeshopapplication.Retrofit.ApiClient;
+import com.example.coffeeshopapplication.adapter.CartAdapter;
+import com.example.coffeeshopapplication.Model.Menu;  // Import Menu yang benar
+import com.example.coffeeshopapplication.databinding.FragmentProductBinding;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ProductFragment extends Fragment implements CartAdapter.OnAddToCartClickListener {
 
-    private FragmentProductBinding binding;  // Pastikan ini sesuai dengan nama layout Anda
+    private FragmentProductBinding binding;
     private CartAdapter adapter;
     private ApiService apiService;
 
@@ -49,53 +40,49 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate layout sesuai dengan nama yang benar
         binding = FragmentProductBinding.inflate(inflater, container, false);
 
-        // Setup RecyclerView with empty adapter initially
-        adapter = new CartAdapter(requireContext(), new ArrayList<>(), ProductFragment.this);
+        // Setup RecyclerView
+        adapter = new CartAdapter(requireContext(), new ArrayList<>(), this);
         binding.cartRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.cartRecyclerView.setAdapter(adapter);
 
-        // Fetch data from API
-        fetchProductsFromApi();
+        // Log tambahan untuk memeriksa setup RecyclerView
+        Log.d("ProductFragment", "RecyclerView setup complete. Adapter set.");
 
-        // Inisialisasi CartButton dan tambahkan onClickListener
-        binding.CartButton.setOnClickListener(v -> {
-            // Mulai ActivityTransaction
-            Intent intent = new Intent(requireContext(), TransactionActivity.class);
-            startActivity(intent);
-        });
+        // Fetch data from API
+        fetchMenuFromApi();
 
         return binding.getRoot();
     }
 
-    private void fetchProductsFromApi() {
-        // Panggil API untuk mengambil data produk
-        apiService.getCartItems().enqueue(new Callback<List<Product>>() {
+    private void fetchMenuFromApi() {
+        apiService.getMenu().enqueue(new Callback<MenuResponse>() {
             @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+            public void onResponse(Call<MenuResponse> call, Response<MenuResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Ambil data produk dan update adapter
-                    List<Product> productList = response.body();
+                    // Ambil data menu dan perbarui adapter
+                    List<Menu> menuList = response.body().getMenuList();
 
-                    // Perbarui adapter dengan data yang diterima
-                    adapter = new CartAdapter(requireContext(), new ArrayList<>(productList), ProductFragment.this);
-                    binding.cartRecyclerView.setAdapter(adapter);
+                    // Log untuk memeriksa ukuran menuList
+                    Log.d("ProductFragment", "Menu fetched successfully. Size: " + menuList.size());
+
+                    // Update RecyclerView dengan data menu
+                    adapter.updateMenuList(menuList);
                 } else {
-                    Log.e("ProductFragment", "Failed to fetch products: " + response.message());
+                    Log.e("ProductFragment", "Failed to fetch menu: " + response.message());
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Product>> call, Throwable t) {
-                Log.e("ProductFragment", "Error fetching products: " + t.getMessage());
+            public void onFailure(Call<MenuResponse> call, Throwable t) {
+                Log.e("ProductFragment", "Error fetching menu: " + t.getMessage());
             }
         });
     }
 
     @Override
-    public void onAddToCart(String name, String price, int quantity) {
+    public void onAddToCart(String name, double price, int quantity) {
         // Intent untuk memulai Activity baru untuk menampilkan transaksi
         Intent intent = new Intent(requireContext(), TransactionActivity.class);
 
@@ -108,6 +95,8 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
         startActivity(intent);
     }
 }
+
+
 
 
 

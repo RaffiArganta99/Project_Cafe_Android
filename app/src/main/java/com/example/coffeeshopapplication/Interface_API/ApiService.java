@@ -1,9 +1,8 @@
 package com.example.coffeeshopapplication.Interface_API;
 
+import com.example.coffeeshopapplication.Model.MenuResponse;
 import com.example.coffeeshopapplication.Product;
-import com.example.coffeeshopapplication.data.MenuItem;
 
-import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -13,8 +12,8 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiService {
-    @GET("cart/items")
-    Call<List<Product>> getCartItems();
+    @GET("MenuApi.php")
+    Call<MenuResponse> getMenu();
 
     @POST("cart/item")
     Call<Void> addCartItem(@Body Product product);
