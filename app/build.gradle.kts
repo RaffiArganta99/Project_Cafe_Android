@@ -51,6 +51,7 @@ dependencies {
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("androidx.core:core:1.10.0") // pastikan versinya sesuai dengan yang terbaru
     implementation ("androidx.appcompat:appcompat:1.6.1") // pastikan versinya sesuai
-    implementation("com.github.bumptech.glide:glide:4.12.0") // Versi dapat disesuaikan
-    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.github.bumptech.glide:glide:4.15.1") // Versi dapat disesuaikan
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
+    implementation("com.squareup.picasso:picasso:2.71828")
 }

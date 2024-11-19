@@ -1,6 +1,7 @@
 package com.example.coffeeshopapplication.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,10 +11,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.coffeeshopapplication.EditMenuDialogFragment;
 import com.example.coffeeshopapplication.Interface_API.ApiService;
 import com.example.coffeeshopapplication.Interface_API.OnAddToCartClickListener;
@@ -22,6 +29,8 @@ import com.example.coffeeshopapplication.R;
 import com.example.coffeeshopapplication.Retrofit.ApiClient;
 import com.example.coffeeshopapplication.databinding.CartItemBinding;
 import com.example.coffeeshopapplication.Model.Menu;
+import com.squareup.picasso.Picasso;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -61,14 +70,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         if (cartItems != null && position < cartItems.size()) {
             Product currentProduct = cartItems.get(position);
 
-            // Log debugging
+            // Log debugging untuk memverifikasi data
             Log.d("CartAdapter", "Binding item at position: " + position);
             Log.d("CartAdapter", "Product Name: " + currentProduct.getName() + ", Price: " + currentProduct.getPrice());
-            Log.d("CartAdapter", "Image URI: " + currentProduct.getImageUri());
+            Log.d("CartAdapter", "Image URL from API: " + currentProduct.getImageUri());
 
             // Set data ke TextView
             holder.cartFoodName.setText(currentProduct.getName());
-            holder.bind(position);
 
             // Mengatur harga ke TextView
             if (currentProduct.getPrice() != 0) {
@@ -84,22 +92,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 Log.e("CartAdapter", "cartFoodName is null");
             }
 
-            // Menggunakan Glide untuk memuat gambar
-            if (currentProduct.getImageUri() != null && !currentProduct.getImageUri().isEmpty()) {
-                Glide.with(context)
-                        .load(currentProduct.getImageUri()) // URI gambar dari API
-                        .placeholder(R.drawable.default_image) // Placeholder jika gambar belum termuat
-                        .error(R.drawable.default_image) // Gambar error jika gagal memuat
-                        .into(holder.cartImage); // Memuat gambar ke dalam `cartImage`
-            } else {
-                // Jika URI gambar kosong atau null, gunakan gambar default
-                holder.cartImage.setImageResource(R.drawable.default_image);
-            }
+            // Menggunakan imageUri langsung dari API
+            String imageUrl = currentProduct.getImageUri(); // Menggunakan URL gambar dari API tanpa tambahan
 
+            // Memuat gambar menggunakan Picasso (atau bisa dengan Glide jika lebih nyaman)
+            Picasso.get()
+                    .load(imageUrl)
+                    .placeholder(R.drawable.default_image) // Gambar sementara saat loading
+                    .error(R.drawable.default_image) // Gambar default jika gagal memuat
+                    .into(holder.cartImage);
         } else {
             Log.e("CartAdapter", "Cart items list is null or index out of bounds");
         }
     }
+
+
 
 
     @Override
@@ -119,12 +126,16 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 Log.e("CartAdapter", "Failed to parse menu price: " + menu.getPrice(), e);
             }
 
+            // Gunakan URL gambar yang sesuai
+            String imageUrl = menu.getImageUrl(); // Misalnya menu.getImageUrl() mengembalikan URL gambar
+
             // Pastikan untuk menggunakan konstruktor yang benar
-            Product product = new Product(0, menu.getMenuName(), priceValue, "path/to/image.jpg", 1);
+            Product product = new Product(0, menu.getMenuName(), priceValue, imageUrl, 1);
             cartItems.add(product);
         }
         notifyDataSetChanged();
     }
+
 
 
     public class CartViewHolder extends RecyclerView.ViewHolder {
@@ -185,6 +196,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             });
         }
 
+
+
         public void bind(int position) {
             Product product = cartItems.get(position);
 
@@ -194,15 +207,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             // Atur harga dengan format Rupiah
             binding.cartItemPrice.setText(String.format("Rp %.2f", product.getPrice()));
 
-            // Atur gambar (URI atau default image)
-            if (product.getImageUri() != null && !product.getImageUri().isEmpty()) {
-                binding.cartImage.setImageURI(Uri.parse(product.getImageUri()));
-            } else {
-                binding.cartImage.setImageResource(R.drawable.default_image);
-            }
+            // Log URL untuk debug
+            Log.d("CartAdapter", "Image URL: " + product.getImageUri()); // Gunakan imageUri langsung
+
+            // Memuat gambar menggunakan Picasso
+            Picasso.get()
+                    .load(product.getImageUri()) // Langsung gunakan URL dari API
+                    .placeholder(R.drawable.default_image) // Gambar sementara saat loading
+                    .error(R.drawable.default_image) // Gambar default jika gagal memuat
+                    .into(binding.cartImage);
 
             Log.d("CartAdapter", "Binding item: " + product.getName() + ", Price: " + product.getPrice());
         }
+
+
 
         private void decreaseQuantity(int position) {
             Product product = cartItems.get(position);

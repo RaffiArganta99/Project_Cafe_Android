@@ -13,6 +13,9 @@ public class Menu {
     @SerializedName("Price")
     private String price;
 
+    @SerializedName("ImageUrl") // atau sesuai dengan nama field pada JSON dari API Anda
+    private String imageUrl;
+
     // Getter methods
     public int getMenuId() {
         return menuId;
@@ -20,6 +23,10 @@ public class Menu {
 
     public String getMenuName() {
         return menuName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public String getPrice() {

@@ -1,12 +1,12 @@
 package com.example.coffeeshopapplication.Retrofit;
 
 import com.example.coffeeshopapplication.Interface_API.ApiService;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
 public class ApiClient {
-    private static final String BASE_URL = "http://192.168.1.12/CafeBonanza/app/controllers/"; // ganti dengan URL API yang benar
+    private static final String BASE_URL = "http://192.168.1.6/CafeBonanza/app/controllers/"; // ganti dengan URL API yang benar
     private static Retrofit retrofit = null;
 
     public static ApiService getApiService() {
