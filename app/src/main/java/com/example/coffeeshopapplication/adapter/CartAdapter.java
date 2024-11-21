@@ -55,6 +55,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         this.listener = listener;
         this.apiService = ApiClient.getApiService();
         this.menuList = new ArrayList<>();
+
     }
 
     @NonNull
@@ -70,41 +71,30 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         if (cartItems != null && position < cartItems.size()) {
             Product currentProduct = cartItems.get(position);
 
-            // Log debugging untuk memverifikasi data
-            Log.d("CartAdapter", "Binding item at position: " + position);
-            Log.d("CartAdapter", "Product Name: " + currentProduct.getName() + ", Price: " + currentProduct.getPrice());
-            Log.d("CartAdapter", "Image URL from API: " + currentProduct.getImageUri());
-
             // Set data ke TextView
             holder.cartFoodName.setText(currentProduct.getName());
 
+            // Atur kategori pada TextView cartItemCategory
+            if (currentProduct.getCategory() != null && !currentProduct.getCategory().isEmpty()) {
+                holder.cartItemCategory.setText(currentProduct.getCategory());
+            } else {
+                Log.e("CartAdapter", "Category is null or empty for product: " + currentProduct.getName());
+            }
+
             // Mengatur harga ke TextView
-            if (currentProduct.getPrice() != 0) {
-                holder.cartItemPrice.setText(String.format("Rp %.2f", currentProduct.getPrice()));
-            } else {
-                Log.e("CartAdapter", "Price is null or zero for product: " + currentProduct.getName());
-            }
+            holder.cartItemPrice.setText(String.format("Rp %.2f", currentProduct.getPrice()));
 
-            // Validasi untuk TextView cartFoodName
-            if (holder.cartFoodName != null) {
-                holder.cartFoodName.setText(currentProduct.getName());
-            } else {
-                Log.e("CartAdapter", "cartFoodName is null");
-            }
-
-            // Menggunakan imageUri langsung dari API
-            String imageUrl = currentProduct.getImageUri(); // Menggunakan URL gambar dari API tanpa tambahan
-
-            // Memuat gambar menggunakan Picasso (atau bisa dengan Glide jika lebih nyaman)
+            // Memuat gambar menggunakan Picasso
             Picasso.get()
-                    .load(imageUrl)
-                    .placeholder(R.drawable.default_image) // Gambar sementara saat loading
-                    .error(R.drawable.default_image) // Gambar default jika gagal memuat
+                    .load(currentProduct.getImageUri())
+                    .placeholder(R.drawable.default_image)
+                    .error(R.drawable.default_image)
                     .into(holder.cartImage);
         } else {
             Log.e("CartAdapter", "Cart items list is null or index out of bounds");
         }
     }
+
 
 
 
@@ -116,31 +106,41 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     public void updateMenuList(List<Menu> menuList) {
         this.menuList = menuList;
+        cartItems.clear(); // Bersihkan data lama
         Log.d("CartAdapter", "Menu list updated with size: " + menuList.size());
+
         for (Menu menu : menuList) {
             double priceValue = 0;
             try {
-                // Ubah harga ke tipe double
                 priceValue = Double.parseDouble(menu.getPrice());
             } catch (NumberFormatException e) {
                 Log.e("CartAdapter", "Failed to parse menu price: " + menu.getPrice(), e);
             }
 
-            // Gunakan URL gambar yang sesuai
-            String imageUrl = menu.getImageUrl(); // Misalnya menu.getImageUrl() mengembalikan URL gambar
+            String category = menu.getCategory();
+            if (category == null || category.isEmpty()) {
+                Log.e("CartAdapter", "Category is null or empty for product: " + menu.getMenuName());
+                category = "Unknown";
+            }
 
-            // Pastikan untuk menggunakan konstruktor yang benar
-            Product product = new Product(0, menu.getMenuName(), priceValue, imageUrl, 1);
+            Product product = new Product(0, menu.getMenuName(), priceValue, menu.getImageUrl(), 1, category);
             cartItems.add(product);
         }
+
         notifyDataSetChanged();
     }
 
 
 
+    // Getter untuk mendapatkan daftar menu
+    public List<Menu> getMenuList() {
+        return menuList;
+    }
+
+
     public class CartViewHolder extends RecyclerView.ViewHolder {
         private final CartItemBinding binding;
-        TextView cartFoodName, cartItemPrice;
+        TextView cartFoodName, cartItemPrice, cartItemCategory;
         ImageView cartImage; // Tambahkan variabel cartImage
 
         public CartViewHolder(CartItemBinding binding) {
@@ -150,6 +150,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             // Inisialisasi TextView
             cartFoodName = binding.cartFoodName;
             cartItemPrice = binding.cartItemPrice;
+            cartItemCategory = binding.cartItemCategory; // Inisialisasi cartItemCategory
 
             // Inisialisasi ImageView
             cartImage = binding.cartImage; // Pastikan ID cartImage sesuai di XML layout

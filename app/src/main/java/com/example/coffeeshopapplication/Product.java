@@ -6,15 +6,18 @@ public class Product {
     private String imageUri; // URI gambar produk
     private int quantity;    // Jumlah produk
     private int id;          // ID produk (berhubungan dengan API)
+    private String category;
 
     // Constructor
-    public Product(int id, String name, double price, String imageUri, int quantity) {
+    public Product(int id, String name, double price, String imageUri, int quantity, String category) {
         this.id = id;
         this.name = name;
-        this.price = price;   // Pastikan harga ditangani sebagai String
+        this.price = price;
         this.imageUri = imageUri;
         this.quantity = quantity;
+        this.category = category; // Tambahkan inisialisasi category
     }
+
 
     // Getter and Setter methods
     public int getId() {
@@ -37,6 +40,10 @@ public class Product {
         return quantity;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
@@ -51,6 +58,10 @@ public class Product {
 
     public void setImageUri(String imageUri) {
         this.imageUri = imageUri;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override
