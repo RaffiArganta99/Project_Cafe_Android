@@ -13,6 +13,9 @@ public class Menu {
     @SerializedName("Price")
     private String price;
 
+    @SerializedName("Stock")
+    private String stock;
+
     @SerializedName("ImageUrl") // atau sesuai dengan nama field pada JSON dari API Anda
     private String imageUrl;
 
@@ -34,6 +37,10 @@ public class Menu {
 
     public String getPrice() {
         return price;
+    }
+
+    public String getStock() {
+        return stock;
     }
 
     public String getCategory() {

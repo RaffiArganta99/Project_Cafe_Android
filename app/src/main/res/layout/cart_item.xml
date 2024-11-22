@@ -37,7 +37,7 @@
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TextView
-                android:id="@+id/cartItemQuantity"
+                android:id="@+id/cart_item_stock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -63,8 +63,9 @@
                 android:layout_marginStart="8dp"
                 android:background="@drawable/plus_square_svgrepo_com"
                 app:layout_constraintBottom_toBottomOf="@+id/minusButton"
-                app:layout_constraintStart_toEndOf="@+id/cartItemQuantity"
-                app:layout_constraintTop_toTopOf="@+id/minusButton" />
+                app:layout_constraintStart_toEndOf="@+id/cart_item_stock"
+                app:layout_constraintTop_toTopOf="@+id/minusButton"
+                app:layout_constraintVertical_bias="0.0" />
 
             <ImageButton
                 android:id="@+id/deleteButton"
@@ -126,7 +127,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
-                android:textColor="@color/white"
+                android:textColor="@android:color/transparent"
                 app:layout_constraintBottom_toTopOf="@+id/ItemCart"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"

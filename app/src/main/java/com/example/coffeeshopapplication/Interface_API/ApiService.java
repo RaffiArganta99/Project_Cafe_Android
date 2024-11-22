@@ -15,15 +15,16 @@ public interface ApiService {
     @GET("MenuApi.php")
     Call<MenuResponse> getMenu();
 
-    @POST("cart/item")
+    @POST("MenuApi.php")
     Call<Void> addCartItem(@Body Product product);
 
-    @PUT("cart/item/{id}")
+    @PUT("MenuApi.php/{id}")
     Call<Void> updateCartItem(@Path("id") int id, @Body Product product);
 
-    @DELETE("cart/item/{id}")
+    @DELETE("MenuApi.php/{id}")
     Call<Void> deleteCartItem(@Path("id") int id);
 }
+
 
 
 
