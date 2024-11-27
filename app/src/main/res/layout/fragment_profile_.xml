@@ -27,7 +27,7 @@
 
     <!-- Teks Judul -->
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/UploadImageButton"
+        android:id="@+id/btnSelectImage"
         android:layout_width="318.672dp"
         android:layout_height="50dp"
         android:layout_marginTop="140dp"
@@ -58,7 +58,7 @@
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/UploadImageButton" />
+        app:layout_constraintTop_toBottomOf="@id/btnSelectImage" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/LogoutButton"

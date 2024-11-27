@@ -121,14 +121,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
             // Parsing harga dari String ke double
             try {
-                priceValue = Double.parseDouble(menu.getPrice());
+                priceValue = Double.parseDouble(menu.getPrice()); // Menggunakan Double.parseDouble
             } catch (NumberFormatException e) {
                 Log.e("CartAdapter", "Failed to parse menu price: " + menu.getPrice(), e);
             }
 
             // Parsing stok dari String ke integer
             try {
-                stockValue = Integer.parseInt(menu.getStock());
+                stockValue = Integer.parseInt(menu.getStock()); // Tetap menggunakan Integer.parseInt
             } catch (NumberFormatException e) {
                 Log.e("CartAdapter", "Failed to parse menu stock: " + menu.getStock(), e);
             }
@@ -145,7 +145,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     priceValue,             // Harga produk
                     menu.getImageUrl(),     // URL gambar
                     category,               // Kategori
-                    stockValue              // Stok produk
+                    stockValue,             // Stok produk
+                    ""
             );
 
             cartItems.add(product);
@@ -154,6 +155,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         // Memperbarui tampilan RecyclerView
         notifyDataSetChanged();
     }
+
 
 
     public class CartViewHolder extends RecyclerView.ViewHolder {
@@ -229,7 +231,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 return;
             }
 
-            Product updatedProduct = new Product(productId, null, 0.0, null, null, newStock);
+            Product updatedProduct = new Product(productId, null, 0.0, null, null, newStock, "");
 
             apiService.updateCartItem(productId, updatedProduct).enqueue(new Callback<Void>() {
                 @Override

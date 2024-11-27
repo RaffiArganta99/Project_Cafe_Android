@@ -13,17 +13,6 @@
         android:layout_height="wrap_content"
         android:background="#F6F5F5">
 
-        <!-- Black Background Section at the Top -->
-
-
-        <!-- Return Button at the Top Left -->
-
-        <!-- Notification Button at the Top Right -->
-
-        <!-- Title Text in the Black Background -->
-
-
-        <!-- CardView with ImageView inside, background set to black -->
 
         <ImageView
             android:id="@+id/imageView2"
@@ -85,10 +74,11 @@
             app:layout_constraintTop_toBottomOf="@id/titleTextView">
 
             <ImageView
-                android:id="@+id/imageView26"
+                android:id="@+id/ivPreviewImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:srcCompat="@tools:sample/avatars" />
+
         </androidx.cardview.widget.CardView>
 
         <!-- Select Image Text Field Below the Black Section -->
@@ -97,7 +87,25 @@
 
 
         <EditText
-            android:id="@+id/editTextText"
+            android:id="@+id/etMenuName"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/persegi_panjang"
+            android:drawableLeft="@drawable/ingredients_svgrepo_com__1_"
+            android:drawablePadding="9dp"
+            android:fontFamily="@font/sansation_regular"
+            android:hint="Nama"
+            android:inputType="text"
+            android:paddingLeft="15dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/btnSelectImage"
+            app:layout_constraintStart_toStartOf="@+id/btnSelectImage"
+            app:layout_constraintTop_toBottomOf="@+id/btnSelectImage" />
+
+        <!-- Price EditText Below Name EditText -->
+        <EditText
+            android:id="@+id/etDescription"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginTop="16dp"
@@ -105,17 +113,16 @@
             android:drawableLeft="@drawable/pencil_svgrepo_com__1_"
             android:drawablePadding="9dp"
             android:fontFamily="@font/sansation_regular"
-            android:hint="Nama"
+            android:hint="Description"
             android:inputType="text"
             android:paddingLeft="15dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/UploadImageButton"
-            app:layout_constraintStart_toStartOf="@+id/UploadImageButton"
-            app:layout_constraintTop_toBottomOf="@+id/UploadImageButton" />
+            app:layout_constraintEnd_toEndOf="@+id/etStock"
+            app:layout_constraintStart_toStartOf="@+id/etStock"
+            app:layout_constraintTop_toBottomOf="@+id/etStock" />
 
-        <!-- Price EditText Below Name EditText -->
         <EditText
-            android:id="@+id/editTextText2"
+            android:id="@+id/etPrice"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginTop="16dp"
@@ -127,13 +134,13 @@
             android:inputType="text"
             android:paddingLeft="15dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@id/editTextText"
-            app:layout_constraintStart_toStartOf="@id/editTextText"
-            app:layout_constraintTop_toBottomOf="@id/editTextText" />
+            app:layout_constraintEnd_toEndOf="@id/etMenuName"
+            app:layout_constraintStart_toStartOf="@id/etMenuName"
+            app:layout_constraintTop_toBottomOf="@id/etMenuName" />
 
         <!-- Stock EditText Below Price EditText -->
         <EditText
-            android:id="@+id/editTextText5"
+            android:id="@+id/etStock"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginTop="16dp"
@@ -145,13 +152,13 @@
             android:inputType="text"
             android:paddingLeft="15dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@id/editTextText2"
-            app:layout_constraintStart_toStartOf="@id/editTextText2"
-            app:layout_constraintTop_toBottomOf="@id/editTextText2" />
+            app:layout_constraintEnd_toEndOf="@id/etPrice"
+            app:layout_constraintStart_toStartOf="@id/etPrice"
+            app:layout_constraintTop_toBottomOf="@id/etPrice" />
 
         <!-- Add Button Below Stock EditText -->
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button4"
+            android:id="@+id/btnAddMenu"
             android:layout_width="0dp"
             android:layout_height="54dp"
             android:layout_marginTop="16dp"
@@ -160,12 +167,12 @@
             android:text="Tambah"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            app:layout_constraintEnd_toEndOf="@+id/spinner"
-            app:layout_constraintStart_toStartOf="@+id/spinner"
-            app:layout_constraintTop_toBottomOf="@+id/spinner" />
+            app:layout_constraintEnd_toEndOf="@+id/spCategory"
+            app:layout_constraintStart_toStartOf="@+id/spCategory"
+            app:layout_constraintTop_toBottomOf="@+id/spCategory" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/UploadImageButton"
+            android:id="@+id/btnSelectImage"
             android:layout_width="318.672dp"
             android:layout_height="50dp"
             android:layout_marginTop="16dp"
@@ -183,20 +190,21 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/spCategory"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/persegi_panjang"
             android:drawableLeft="@drawable/cart_fill_svgrepo_com"
             android:drawablePadding="9dp"
+            android:entries="@array/categories"
             android:fontFamily="@font/sansation_regular"
             android:inputType="text"
             android:paddingLeft="15dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/editTextText5"
-            app:layout_constraintStart_toStartOf="@+id/editTextText5"
-            app:layout_constraintTop_toBottomOf="@+id/editTextText5" />
+            app:layout_constraintEnd_toEndOf="@+id/etDescription"
+            app:layout_constraintStart_toStartOf="@+id/etDescription"
+            app:layout_constraintTop_toBottomOf="@+id/etDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

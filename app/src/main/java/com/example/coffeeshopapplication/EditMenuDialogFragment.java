@@ -82,7 +82,7 @@ public class EditMenuDialogFragment extends DialogFragment {
     }
 
     private void updateProductToApi(int productId, String name, String price) {
-        Product updatedProduct = new Product(productId, name, Double.parseDouble(price), imageUri.toString(), "", 0); // 0 untuk stok, jika tidak diperlukan
+        Product updatedProduct = new Product(productId, name, Double.parseDouble(price), imageUri.toString(), "", 0, ""); // 0 untuk stok, jika tidak diperlukan
         apiService.updateCartItem(productId, updatedProduct).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
