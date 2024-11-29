@@ -21,6 +21,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
+    <ImageButton
+        android:id="@+id/BellNotif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/bell_ring_svgrepo_com__1_"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/imageView18"
         android:layout_width="45dp"
@@ -193,23 +204,6 @@
         app:layout_constraintStart_toStartOf="@+id/textView11"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
-    <EditText
-        android:id="@+id/editTextText4"
-        android:layout_width="323dp"
-        android:layout_height="47.8dp"
-        android:layout_marginTop="6dp"
-        android:background="@drawable/dashboard_capsule"
-        android:drawableLeft="@drawable/search_right_1505_svgrepo_com"
-        android:drawablePadding="12dp"
-        android:ems="10"
-        android:hint="Search"
-        android:inputType="text"
-        android:paddingStart="24dp"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/imageView30"
-        app:layout_constraintStart_toStartOf="@+id/imageView30"
-        app:layout_constraintTop_toBottomOf="@+id/textView15" />
-
     <TextView
         android:id="@+id/textView20"
         android:layout_width="wrap_content"
@@ -247,13 +241,13 @@
         android:id="@+id/cardView"
         android:layout_width="172.8dp"
         android:layout_height="92dp"
-        android:layout_marginTop="11dp"
+        android:layout_marginTop="16dp"
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.069"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText4">
+        app:layout_constraintTop_toBottomOf="@+id/imageView21">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -309,12 +303,11 @@
         android:id="@+id/cardView2"
         android:layout_width="172.8dp"
         android:layout_height="92dp"
-        android:layout_marginTop="11dp"
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cardView"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText4">
+        app:layout_constraintTop_toTopOf="@+id/cardView">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

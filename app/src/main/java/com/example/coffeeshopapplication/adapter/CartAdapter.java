@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -273,37 +275,52 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         }
 
 
-
-
-
         private void deleteItem(int position) {
             Product product = cartItems.get(position);
-            apiService.deleteCartItem(product.getId()).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.isSuccessful()) {
-                        cartItems.remove(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, cartItems.size());
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Log.e("CartAdapter", "Failed to delete item from API: " + t.getMessage());
-                }
-            });
+            // Menampilkan dialog konfirmasi sebelum menghapus
+            new AlertDialog.Builder(context)
+                    .setTitle("Confirm Deletion")
+                    .setMessage("Are you sure you want to delete this item?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        // Jika pengguna mengkonfirmasi penghapusan
+                        apiService.deleteCartItem(product.getId()).enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (response.isSuccessful()) {
+                                    // Jika penghapusan berhasil, update UI
+                                    cartItems.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position, cartItems.size());
+
+                                    // Sinkronisasi data setelah penghapusan
+                                    syncMenuData();
+                                } else {
+                                    Log.e("CartAdapter", "Failed to delete item from API: " + response.message());
+                                    Toast.makeText(context, "Failed to delete item. Please try again.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Log.e("CartAdapter", "Failed to delete item from API: " + t.getMessage());
+                                Toast.makeText(context, "Failed to delete item. Please check your connection.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         }
 
-        // Panggil API untuk sinkronisasi stok setelah update atau delete
         private void syncMenuData() {
             apiService.getMenu().enqueue(new Callback<MenuResponse>() {
                 @Override
                 public void onResponse(Call<MenuResponse> call, Response<MenuResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         updateMenuList(response.body().getMenuList());
+                        Log.d("CartAdapter", "Menu data updated from API.");
                     } else {
-                        Log.e("CartAdapter", "Failed to sync menu data: " + response.message());
+                        Log.e("CartAdapter", "Failed to fetch menu data: " + response.message());
                     }
                 }
 
@@ -313,6 +330,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 }
             });
         }
+
 
 
         private void updateCartItemToApi(int position) {

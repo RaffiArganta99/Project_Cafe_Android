@@ -16,27 +16,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/rectangle_572" />
 
-    <ImageView
-        android:id="@+id/imageView19"
+    <ImageButton
+        android:id="@+id/BellNotif"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="92dp"
-        app:layout_constraintEnd_toStartOf="@+id/textView23"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/arrow_back_circle_svgrepo_com" />
-
-    <ImageView
-        android:id="@+id/imageView20"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="92dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/bell_ring_svgrepo_com__1_"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView23"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/bell_ring_svgrepo_com__1_" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView23"
@@ -64,22 +53,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CartButton" />
 
-    <EditText
-        android:id="@+id/editTextText7"
-        android:layout_width="354.6dp"
-        android:layout_height="41.4dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/dashboard_capsule"
-        android:drawableLeft="@drawable/search_right_1505_svgrepo_com"
-        android:drawablePadding="12dp"
-        android:ems="10"
-        android:hint="Cari"
-        android:inputType="text"
-        android:paddingStart="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/imageView17"
-        app:layout_constraintTop_toBottomOf="@+id/textView23" />
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/CartButton"
         android:layout_width="133.2dp"
@@ -92,19 +65,35 @@
         android:text="Keranjang"
         android:textAllCaps="false"
         android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@+id/editTextText7"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText7" />
+        app:layout_constraintStart_toStartOf="@+id/searchView"
+        app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
     <Spinner
         android:id="@+id/spinnerCategory"
         android:layout_width="91.2dp"
         android:layout_height="39.33dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="32dp"
         android:background="@drawable/cart_capsule"
-        app:layout_constraintEnd_toEndOf="@+id/editTextText7"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText7"
-        android:entries="@array/category_array"/>
+        android:entries="@array/category_array"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchView" />
+
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="354.6dp"
+        android:layout_height="41.4dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/dashboard_capsule"
+        android:drawableLeft="@drawable/search_right_1505_svgrepo_com"
+        android:drawablePadding="12dp"
+        android:ems="10"
+        android:hint="Cari"
+        android:inputType="text"
+        android:paddingStart="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView17"
+        app:layout_constraintStart_toStartOf="@+id/imageView17"
+        app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

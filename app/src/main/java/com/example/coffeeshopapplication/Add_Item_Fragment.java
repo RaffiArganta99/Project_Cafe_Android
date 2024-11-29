@@ -5,6 +5,7 @@ import static java.io.File.createTempFile;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -42,6 +43,7 @@ import com.google.gson.JsonObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +58,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import android.Manifest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class Add_Item_Fragment extends Fragment {
@@ -76,21 +81,21 @@ public class Add_Item_Fragment extends Fragment {
         // Periksa izin
         checkPermissions();
 
-        // Initialize views
+        // Inisialisasi views
         etMenuName = view.findViewById(R.id.etMenuName);
         etPrice = view.findViewById(R.id.etPrice);
         etStock = view.findViewById(R.id.etStock);
+        etDescription = view.findViewById(R.id.etDescription);
         spCategory = view.findViewById(R.id.spCategory);
         ivPreviewImage = view.findViewById(R.id.ivPreviewImage);
         btnSelectImage = view.findViewById(R.id.btnSelectImage);
         btnAddMenu = view.findViewById(R.id.btnAddMenu);
-        etDescription = view.findViewById(R.id.etDescription);
 
-        // Set listeners
+        // Set listener
         btnSelectImage.setOnClickListener(v -> openImagePicker());
         btnAddMenu.setOnClickListener(v -> validateAndUpload());
 
-        // Set up spinner with category data
+        // Set spinner kategori
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 getContext(),
                 R.array.categories,
@@ -103,13 +108,6 @@ public class Add_Item_Fragment extends Fragment {
     }
 
     private void openImagePicker() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PICK_IMAGE_REQUEST);
-            return;
-        }
-
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
@@ -119,26 +117,7 @@ public class Add_Item_Fragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             imageUri = data.getData();
-            ivPreviewImage.setImageURI(imageUri); // Show preview of selected image
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (imageUri != null) {
-            Log.d("AddMenu", "Saving image URI: " + imageUri.toString());
-            outState.putString("image_uri", imageUri.toString());
-        }
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey("image_uri")) {
-            imageUri = Uri.parse(savedInstanceState.getString("image_uri"));
-            Log.d("AddMenu", "Restoring image URI: " + imageUri.toString());
-            ivPreviewImage.setImageURI(imageUri);
+            ivPreviewImage.setImageURI(imageUri); // Menampilkan gambar
         }
     }
 
@@ -149,122 +128,124 @@ public class Add_Item_Fragment extends Fragment {
         String description = etDescription.getText().toString().trim();
         String category = spCategory.getSelectedItem().toString();
 
+        // Validasi input
         if (TextUtils.isEmpty(menuName) || TextUtils.isEmpty(priceStr) || TextUtils.isEmpty(stockStr) ||
                 TextUtils.isEmpty(description) || imageUri == null) {
             Toast.makeText(getContext(), "Please fill in all fields and select an image.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Validasi angka
-        int price, stock;
-        try {
-            price = Integer.parseInt(priceStr);
-            stock = Integer.parseInt(stockStr);
-            if (price <= 0 || stock <= 0) {
-                Toast.makeText(getContext(), "Price and stock must be positive numbers.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } catch (NumberFormatException e) {
-            Toast.makeText(getContext(), "Price and stock must be valid numbers.", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(priceStr.trim()) || TextUtils.isEmpty(stockStr.trim()) ||
+                !TextUtils.isDigitsOnly(priceStr) || !TextUtils.isDigitsOnly(stockStr)) {
+            Toast.makeText(getContext(), "Price and Stock must be numeric and not empty.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Lakukan upload
+        // Debug logging
+        Log.d("AddMenu", "Validating inputs: " +
+                "\nMenu Name: " + menuName +
+                "\nPrice: " + priceStr +
+                "\nStock: " + stockStr +
+                "\nIs Price Numeric: " + TextUtils.isDigitsOnly(priceStr) +
+                "\nIs Stock Numeric: " + TextUtils.isDigitsOnly(stockStr));
+
+
+        // Mengonversi harga dan stok ke integer
+        int price = Integer.parseInt(priceStr);
+        int stock = Integer.parseInt(stockStr);
+
+        // Validasi harga dan stok agar lebih besar dari 0
+        if (price <= 0 || stock <= 0) {
+            Toast.makeText(getContext(), "Price and Stock must be positive numbers.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Kirim data setelah validasi berhasil
         uploadMenu(menuName, price, stock, category, description, imageUri);
     }
 
-    private void resetForm() {
-        etMenuName.setText("");  // Reset EditText
-        etPrice.setText("");     // Reset EditText
-        etStock.setText("");     // Reset EditText
-        etDescription.setText("");  // Reset EditText
-        spCategory.setSelection(0);  // Reset Spinner to the first item
-        ivPreviewImage.setImageResource(R.drawable.default_image);  // Set default image or clear the preview
-        imageUri = null;  // Clear image URI
-    }
 
-
-    private String generateUniqueFileName(String fileExtension) {
-        return UUID.randomUUID().toString().replace("-", "") + "." + fileExtension;
-    }
-
-    private String getFileExtensionFromUri(Uri uri) {
-        String extension = null;
-        ContentResolver contentResolver = getContext().getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        String mimeType = contentResolver.getType(uri);
-
-        if (mimeType != null) {
-            extension = mimeTypeMap.getExtensionFromMimeType(mimeType);
-        }
-
-        return extension;
-    }
 
     private void uploadMenu(String menuName, int price, int stock, String category, String description, Uri imageUri) {
-        try {
-            // Dapatkan ekstensi file dari URI
-            String fileExtension = getFileExtensionFromUri(imageUri);
+        File file = new File(getRealPathFromURI(imageUri));
 
-            if (fileExtension == null) {
-                Toast.makeText(getContext(), "Error: Cannot determine file extension.", Toast.LENGTH_SHORT).show();
-                return;
+        if (!file.exists()) {
+            Toast.makeText(getContext(), "File does not exist", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // PENTING: Konversi ke string dengan String.valueOf()
+        RequestBody namePart = RequestBody.create(MediaType.parse("text/plain"), menuName);
+        RequestBody pricePart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(price));
+        RequestBody stockPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(stock));
+        RequestBody categoryPart = RequestBody.create(MediaType.parse("text/plain"), category);
+        RequestBody descriptionPart = RequestBody.create(MediaType.parse("text/plain"), description);
+
+        RequestBody requestFile = RequestBody.create(file, MediaType.parse("image/*"));
+        MultipartBody.Part imagePart = MultipartBody.Part.createFormData("imageUrl", file.getName(), requestFile);
+
+        ApiService apiService = ApiClient.getApiService();
+        Call<ResponseBody> call = apiService.addMenu(
+                namePart,
+                descriptionPart,
+                pricePart,
+                stockPart,
+                categoryPart,
+                imagePart
+        );
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    // Log raw response
+                    String responseString = response.body() != null ? response.body().string() : "Empty response";
+                    Log.d("AddMenu", "Server Response: " + responseString);
+
+                    if (response.isSuccessful()) {
+                        Toast.makeText(getContext(), "Menu added successfully!", Toast.LENGTH_SHORT).show();
+                        resetForm();
+                    } else {
+                        // Log error body
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
+                        Toast.makeText(getContext(), "Failed: " + errorBody, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), "Error processing response", Toast.LENGTH_SHORT).show();
+                }
             }
 
-            // Hasilkan nama file unik seperti di PHP
-            String uniqueFileName = generateUniqueFileName(fileExtension);
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
-            // Buat path relatif
-            String relativePath = "upload/menu/" + uniqueFileName;
 
-            // Buat JSON data
-            JsonObject menuData = new JsonObject();
-            menuData.addProperty("MenuName", menuName);
-            menuData.addProperty("Price", price);
-            menuData.addProperty("Stock", stock);
-            menuData.addProperty("Category", category);
-            menuData.addProperty("Description", description);
-            menuData.addProperty("ImageUrl", relativePath); // Gunakan path relatif
 
-            // Kirim data menggunakan Retrofit
-            ApiService apiService = ApiClient.getApiService();
-            Call<ResponseBody> call = apiService.addMenu(menuData);
+    private void resetForm() {
+        etMenuName.setText("");
+        etPrice.setText("");
+        etStock.setText("");
+        etDescription.setText("");
+        spCategory.setSelection(0);
+        ivPreviewImage.setImageResource(R.drawable.default_image);
+        imageUri = null;
+    }
 
-            call.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        try {
-                            String responseBody = response.body().string();
-                            Log.d("AddMenu", "Response: " + responseBody);
-                            Toast.makeText(getContext(), "Menu added successfully!", Toast.LENGTH_SHORT).show();
-
-                            // Reset form after successful upload
-                            resetForm();
-
-                        } catch (IOException e) {
-                            Log.e("AddMenu", "Error reading response: " + e.getMessage());
-                        }
-                    } else {
-                        Log.e("AddMenu", "Response failed. Code: " + response.code());
-                        Toast.makeText(getContext(), "Failed to add menu. Code: " + response.code(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.e("AddMenu", "Error: " + t.getMessage());
-                    Toast.makeText(getContext(), "Error adding menu: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-
-                    // Reset form after successful upload
-                    resetForm();
-                }
-            });
-
-        } catch (Exception e) {
-            Log.e("AddMenu", "Error: " + e.getMessage());
-            Toast.makeText(getContext(), "An error occurred.", Toast.LENGTH_SHORT).show();
+    private String getRealPathFromURI(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContext().getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(columnIndex);
+            cursor.close();
+            return path;
         }
+        return null;
     }
 
     private void checkPermissions() {
@@ -274,16 +255,6 @@ public class Add_Item_Fragment extends Fragment {
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PICK_IMAGE_REQUEST);
         }
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PICK_IMAGE_REQUEST) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getContext(), "Permission granted!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getContext(), "Permission denied. App cannot access storage.", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 }
+
+
