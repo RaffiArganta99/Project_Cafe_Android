@@ -48,6 +48,9 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    // OkHttp Logging Interceptor
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("androidx.core:core:1.10.0") // pastikan versinya sesuai dengan yang terbaru
     implementation ("androidx.appcompat:appcompat:1.6.1") // pastikan versinya sesuai
