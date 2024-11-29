@@ -7,6 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -21,6 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -29,11 +34,11 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
     private FragmentProductBinding binding;
     private CartAdapter adapter;
     private ApiService apiService;
+    private List<Menu> fullMenuList = new ArrayList<>(); // Daftar lengkap menu
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Initialize ApiService
         apiService = ApiClient.getApiService();
     }
 
@@ -47,10 +52,37 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
         binding.cartRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.cartRecyclerView.setAdapter(adapter);
 
-        // Log tambahan untuk memeriksa setup RecyclerView
-        Log.d("ProductFragment", "RecyclerView setup complete. Adapter set.");
+        // Setup Spinner
+        List<String> categories = Arrays.asList("All Menu", "Food", "Drink");
+        ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                categories
+        );
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerCategory.setAdapter(adapterSpinner);
 
-        // Fetch data from API
+        binding.spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCategory = parent.getItemAtPosition(position).toString();
+                List<Menu> filteredList = new ArrayList<>();
+                for (Menu menu : fullMenuList) {
+                    if (selectedCategory.equalsIgnoreCase("All Menu") ||
+                            menu.getCategory().trim().equalsIgnoreCase(selectedCategory.trim())) {
+                        filteredList.add(menu);
+                    }
+                }
+                adapter.updateMenuList(filteredList); // Update daftar di adapter
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                adapter.updateMenuList(fullMenuList); // Tampilkan semua menu jika tidak ada yang dipilih
+            }
+        });
+
+        // Fetch data dari API
         fetchMenuFromApi();
 
         return binding.getRoot();
@@ -61,16 +93,11 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
             @Override
             public void onResponse(Call<MenuResponse> call, Response<MenuResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Ambil data menu dan perbarui adapter
-                    List<Menu> menuList = response.body().getMenuList();
-
-                    // Log untuk memeriksa ukuran menuList
-                    Log.d("ProductFragment", "Menu fetched successfully. Size: " + menuList.size());
-
-                    // Update RecyclerView dengan data menu
-                    adapter.updateMenuList(menuList);
+                    fullMenuList.clear();
+                    fullMenuList.addAll(response.body().getMenuList()); // Simpan daftar lengkap menu
+                    adapter.updateMenuList(fullMenuList); // Tampilkan semua menu di RecyclerView
                 } else {
-                    Log.e("ProductFragment", "Failed to fetch menu: " + response.message());
+                    Log.e("ProductFragment", "API Response failed: " + response.message());
                 }
             }
 
@@ -83,18 +110,15 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
 
     @Override
     public void onAddToCart(String name, double price, int quantity) {
-        // Intent untuk memulai Activity baru untuk menampilkan transaksi
         Intent intent = new Intent(requireContext(), TransactionActivity.class);
-
-        // Kirim data yang diperlukan ke Activity
         intent.putExtra("ITEM_NAME", name);
         intent.putExtra("ITEM_PRICE", price);
         intent.putExtra("ITEM_QUANTITY", quantity);
-
-        // Memulai Activity
         startActivity(intent);
     }
 }
+
+
 
 
 

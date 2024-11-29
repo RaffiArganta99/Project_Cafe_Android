@@ -55,6 +55,7 @@
         android:id="@+id/cartRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         android:background="#F6F5F5"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -93,6 +94,17 @@
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/editTextText7"
         app:layout_constraintTop_toBottomOf="@+id/editTextText7" />
+
+    <Spinner
+        android:id="@+id/spinnerCategory"
+        android:layout_width="91.2dp"
+        android:layout_height="39.33dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/cart_capsule"
+        app:layout_constraintEnd_toEndOf="@+id/editTextText7"
+        app:layout_constraintTop_toBottomOf="@+id/editTextText7"
+        android:entries="@array/category_array"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

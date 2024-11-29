@@ -2,18 +2,22 @@ package com.example.coffeeshopapplication;
 
 public class Product {
     private String name;     // Nama produk
-    private double price;    // Menggunakan String jika harga disertai simbol atau format lainnya
+    private double price;    // Harga produk
     private String imageUri; // URI gambar produk
-    private int quantity;    // Jumlah produk
+    private int stock;       // Stok produk
     private int id;          // ID produk (berhubungan dengan API)
+    private String category; // Kategori produk
+    private String description; // Deskripsi produk
 
     // Constructor
-    public Product(int id, String name, double price, String imageUri, int quantity) {
+    public Product(int id, String name, double price, String imageUri, String category, int stock, String description) {
         this.id = id;
         this.name = name;
-        this.price = price;   // Pastikan harga ditangani sebagai String
+        this.price = price;
         this.imageUri = imageUri;
-        this.quantity = quantity;
+        this.category = category;
+        this.stock = stock;
+        this.description = description;
     }
 
     // Getter and Setter methods
@@ -33,15 +37,19 @@ public class Product {
         return imageUri;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getStock() {
+        return stock;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public String getCategory() {
+        return category;
     }
 
-    public void setPrice(double price) { // Sesuaikan tipe data dengan API
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -53,14 +61,24 @@ public class Product {
         this.imageUri = imageUri;
     }
 
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", price='" + price + '\'' +
+                ", price=" + price +
                 ", imageUri='" + imageUri + '\'' +
-                ", quantity=" + quantity +
+                ", stock=" + stock +
+                ", category='" + category + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }
