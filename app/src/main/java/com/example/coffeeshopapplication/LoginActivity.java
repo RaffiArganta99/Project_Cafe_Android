@@ -65,6 +65,20 @@ public class LoginActivity extends AppCompatActivity {
                     if ("success".equals(loginResponse.getStatus())) {
                         Toast.makeText(LoginActivity.this, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
 
+                        // Simpan data profil ke SharedPreferences
+                        getSharedPreferences("UserProfile", MODE_PRIVATE)
+                                .edit()
+                                .putInt("EmployeeId", loginResponse.getUser().getEmployeeId()) // Simpan int
+                                .putString("Username", loginResponse.getUser().getUsername())
+                                .putString("Email", loginResponse.getUser().getEmail())
+                                .putString("Role", loginResponse.getUser().getRole())
+                                .putString("Phone", loginResponse.getUser().getPhone())
+                                .putString("Gender", loginResponse.getUser().getGender())
+                                .putString("DateOfBirth", loginResponse.getUser().getDateOfBirth())
+                                .putString("Address", loginResponse.getUser().getAddress())
+                                .putString("ImageUrl", loginResponse.getUser().getImageUrl())
+                                .apply();
+
                         // Pindah ke FragmentMainActivity
                         Intent intent = new Intent(LoginActivity.this, FragmentMainActivity.class);
                         startActivity(intent);
