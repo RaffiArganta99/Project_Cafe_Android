@@ -47,7 +47,9 @@ public interface ApiService {
 
 
     @DELETE("MenuApi.php")
-    Call<Void> deleteCartItem(@Path("id") int id);
+    Call<Void> deleteCartItem(@Query("id") int id);
+
+
 
 
     // Endpoint untuk login menggunakan parameter FormUrlEncoded
