@@ -259,11 +259,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             });
         }
 
-
-
-
-
-
         private void fetchLatestMenuData() {
             apiService.getMenu().enqueue(new Callback<MenuResponse>() {
                 @Override
@@ -320,6 +315,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .setNegativeButton("No", null)
                     .show();
         }
+
+
 
         private void syncMenuData() {
             apiService.getMenu().enqueue(new Callback<MenuResponse>() {
