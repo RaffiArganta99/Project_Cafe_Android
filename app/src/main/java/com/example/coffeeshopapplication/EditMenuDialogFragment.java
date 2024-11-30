@@ -62,8 +62,8 @@ public class EditMenuDialogFragment extends DialogFragment {
             String name = nameEditText.getText().toString();
             String price = priceEditText.getText().toString();
 
-            // Update ke API tanpa stok
-            updateProductToApi(productId, name, price);
+//            // Update ke API tanpa stok
+//            updateProductToApi(productId, name, price);
 
             if (listener != null) {
                 listener.onEditComplete(name, price, imageUri);
@@ -81,24 +81,24 @@ public class EditMenuDialogFragment extends DialogFragment {
         return view;
     }
 
-    private void updateProductToApi(int productId, String name, String price) {
-        Product updatedProduct = new Product(productId, name, Double.parseDouble(price), imageUri.toString(), "", 0, ""); // 0 untuk stok, jika tidak diperlukan
-        apiService.updateCartItem(productId, updatedProduct).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Log.d("EditMenuDialog", "Product updated successfully");
-                } else {
-                    Log.e("EditMenuDialog", "Failed to update product: " + response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("EditMenuDialog", "Error updating product: " + t.getMessage());
-            }
-        });
-    }
+//    private void updateProductToApi(int productId, String name, String price) {
+//        Product updatedProduct = new Product(productId, name, Double.parseDouble(price), imageUri.toString(), "", 0, ""); // 0 untuk stok, jika tidak diperlukan
+//        apiService.updateCartItem(productId, updatedProduct).enqueue(new Callback<Void>() {
+//            @Override
+//            public void onResponse(Call<Void> call, Response<Void> response) {
+//                if (response.isSuccessful()) {
+//                    Log.d("EditMenuDialog", "Product updated successfully");
+//                } else {
+//                    Log.e("EditMenuDialog", "Failed to update product: " + response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Void> call, Throwable t) {
+//                Log.e("EditMenuDialog", "Error updating product: " + t.getMessage());
+//            }
+//        });
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

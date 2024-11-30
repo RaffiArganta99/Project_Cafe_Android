@@ -2,8 +2,11 @@ package com.example.coffeeshopapplication.Interface_API;
 
 import com.example.coffeeshopapplication.Model.MenuResponse;
 import com.example.coffeeshopapplication.Model.LoginResponse;
+import com.example.coffeeshopapplication.Model.ResponseUpdateStock;
 import com.example.coffeeshopapplication.Model.User;
 import com.example.coffeeshopapplication.Product;
+
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -37,7 +40,11 @@ public interface ApiService {
     );
 
     @PUT("MenuApi.php/{id}")
-    Call<Void> updateCartItem(@Path("id") int id, @Body Product product);
+    Call<ResponseUpdateStock> updateStock(
+            @Path("id") int id,
+            @Body Map<String, Object> stockUpdate
+    );
+
 
     @DELETE("MenuApi.php")
     Call<Void> deleteCartItem(@Path("id") int id);
