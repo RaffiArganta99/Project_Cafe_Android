@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +19,7 @@ import com.example.coffeeshopapplication.EditMenuDialogFragment;
 import com.example.coffeeshopapplication.Interface_API.ApiService;
 import com.example.coffeeshopapplication.Interface_API.OnAddToCartClickListener;
 import com.example.coffeeshopapplication.Model.MenuResponse;
+import com.example.coffeeshopapplication.Model.ResponseUpdateStock;
 import com.example.coffeeshopapplication.Product;
 import com.example.coffeeshopapplication.ProductFragment;
 import com.example.coffeeshopapplication.R;
@@ -25,12 +28,16 @@ import com.example.coffeeshopapplication.databinding.CartItemBinding;
 import com.example.coffeeshopapplication.Model.Menu;
 import com.squareup.picasso.Picasso;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
@@ -202,56 +209,60 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
             // Update stok ke API
             updateStockToApi(product.getId(), product.getStock());
-
-
         }
 
         private void decreaseStock(int position) {
             Product product = cartItems.get(position);
-
-            // Cek jika stok lebih besar dari 0, maka boleh dikurangi
             if (product.getStock() > 0) {
                 product.setStock(product.getStock() - 1);
                 binding.cartItemStock.setText(String.valueOf(product.getStock()));
 
                 // Update stok ke API
                 updateStockToApi(product.getId(), product.getStock());
-
-            } else {
-                // Log jika stok sudah 0
-                Log.w("CartAdapter", "Stock is already 0, cannot decrease further.");
             }
         }
 
-
-
         private void updateStockToApi(int productId, int newStock) {
+            // Validasi stok tidak boleh negatif
             if (newStock < 0) {
-                Log.e("CartAdapter", "Stock tidak boleh negatif. Nilai yang diterima: " + newStock);
+                Log.e("CartAdapter", "Stock tidak boleh negatif. Nilai: " + newStock);
                 return;
             }
 
-            Product updatedProduct = new Product(productId, null, 0.0, null, null, newStock, "");
+            // Membuat Map untuk mengirimkan stok baru
+            Map<String, Object> stockUpdate = new HashMap<>();
+            stockUpdate.put("Stock", newStock); // Mengirim stok baru
 
-            apiService.updateCartItem(productId, updatedProduct).enqueue(new Callback<Void>() {
+            // Mengirim permintaan PUT ke API
+            apiService.updateStock(productId, stockUpdate).enqueue(new Callback<ResponseUpdateStock>() {
                 @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
+                public void onResponse(Call<ResponseUpdateStock> call, Response<ResponseUpdateStock> response) {
                     if (response.isSuccessful()) {
-                        Log.d("CartAdapter", "Stock updated successfully in API.");
-
-                        // Sinkronkan ulang menu dari API setelah update berhasil
-                        fetchLatestMenuData();
+                        // Jika berhasil, cek pesan dan update UI jika stok berhasil diubah
+                        if (response.body() != null && response.body().getMessage() != null && response.body().getMessage().equals("Stock updated successfully")) {
+                            Log.d("CartAdapter", "Stock updated successfully.");
+                            // Perbarui UI atau beri notifikasi jika diperlukan
+                        } else {
+                            Log.e("CartAdapter", "Error: " + response.body().getMessage());
+                        }
                     } else {
                         Log.e("CartAdapter", "Failed to update stock: " + response.message());
+                        Toast.makeText(context, "Failed to update stock. Please try again.", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
-                public void onFailure(Call<Void> call, Throwable t) {
+                public void onFailure(Call<ResponseUpdateStock> call, Throwable t) {
                     Log.e("CartAdapter", "Error updating stock: " + t.getMessage());
+                    Toast.makeText(context, "Failed to update stock. Please check your connection.", Toast.LENGTH_SHORT).show();
                 }
             });
         }
+
+
+
+
+
 
         private void fetchLatestMenuData() {
             apiService.getMenu().enqueue(new Callback<MenuResponse>() {
@@ -273,37 +284,52 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         }
 
 
-
-
-
         private void deleteItem(int position) {
             Product product = cartItems.get(position);
-            apiService.deleteCartItem(product.getId()).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.isSuccessful()) {
-                        cartItems.remove(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, cartItems.size());
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Log.e("CartAdapter", "Failed to delete item from API: " + t.getMessage());
-                }
-            });
+            // Menampilkan dialog konfirmasi sebelum menghapus
+            new AlertDialog.Builder(context)
+                    .setTitle("Confirm Deletion")
+                    .setMessage("Are you sure you want to delete this item?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        // Jika pengguna mengkonfirmasi penghapusan
+                        apiService.deleteCartItem(product.getId()).enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (response.isSuccessful()) {
+                                    // Jika penghapusan berhasil, update UI
+                                    cartItems.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position, cartItems.size());
+
+                                    // Sinkronisasi data setelah penghapusan
+                                    syncMenuData();
+                                } else {
+                                    Log.e("CartAdapter", "Failed to delete item from API: " + response.message());
+                                    Toast.makeText(context, "Failed to delete item. Please try again.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Log.e("CartAdapter", "Failed to delete item from API: " + t.getMessage());
+                                Toast.makeText(context, "Failed to delete item. Please check your connection.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         }
 
-        // Panggil API untuk sinkronisasi stok setelah update atau delete
         private void syncMenuData() {
             apiService.getMenu().enqueue(new Callback<MenuResponse>() {
                 @Override
                 public void onResponse(Call<MenuResponse> call, Response<MenuResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         updateMenuList(response.body().getMenuList());
+                        Log.d("CartAdapter", "Menu data updated from API.");
                     } else {
-                        Log.e("CartAdapter", "Failed to sync menu data: " + response.message());
+                        Log.e("CartAdapter", "Failed to fetch menu data: " + response.message());
                     }
                 }
 
@@ -315,23 +341,24 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         }
 
 
-        private void updateCartItemToApi(int position) {
-            Product product = cartItems.get(position);
-            apiService.updateCartItem(product.getId(), product).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.isSuccessful()) {
-                        Log.d("CartAdapter", "Item updated in API successfully");
-                    } else {
-                        Log.e("CartAdapter", "Failed to update item in API");
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Log.e("CartAdapter", "Error updating item in API: " + t.getMessage());
-                }
-            });
-        }
+//        private void updateCartItemToApi(int position) {
+//            Product product = cartItems.get(position);
+//            apiService.updateCartItem(product.getId(), product).enqueue(new Callback<Void>() {
+//                @Override
+//                public void onResponse(Call<Void> call, Response<Void> response) {
+//                    if (response.isSuccessful()) {
+//                        Log.d("CartAdapter", "Item updated in API successfully");
+//                    } else {
+//                        Log.e("CartAdapter", "Failed to update item in API");
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<Void> call, Throwable t) {
+//                    Log.e("CartAdapter", "Error updating item in API: " + t.getMessage());
+//                }
+//            });
+//        }
     }
 }
