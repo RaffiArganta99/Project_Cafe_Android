@@ -2,9 +2,7 @@ package com.example.coffeeshopapplication.Interface_API;
 
 import com.example.coffeeshopapplication.Model.MenuResponse;
 import com.example.coffeeshopapplication.Model.LoginResponse;
-import com.example.coffeeshopapplication.Model.ResponseUpdateStock;
-import com.example.coffeeshopapplication.Model.User;
-import com.example.coffeeshopapplication.Product;
+import com.example.coffeeshopapplication.Model.ResponseUpdate;
 
 import java.util.Map;
 
@@ -39,17 +37,25 @@ public interface ApiService {
             @Part MultipartBody.Part imageUrl
     );
 
-    @PUT("MenuApi.php/{id}")
-    Call<ResponseUpdateStock> updateStock(
-            @Path("id") int id,
-            @Body Map<String, Object> stockUpdate
+
+    @PUT("MenuApi.php")
+    Call<ResponseUpdate> updateMenu(
+            @Query("id") int id,
+            @Body Map<String, Object> productUpdate
+
+    );
+
+    @Multipart
+    @POST("MenuApi.php")
+    Call<ResponseBody> updateMenuImage(
+            @Query("id") int id, // Menggunakan @Query untuk query string
+            @Query("action") String action, // Menambahkan action sebagai query parameter
+            @Part MultipartBody.Part imageUrl
     );
 
 
     @DELETE("MenuApi.php")
     Call<Void> deleteCartItem(@Query("id") int id);
-
-
 
 
     // Endpoint untuk login menggunakan parameter FormUrlEncoded

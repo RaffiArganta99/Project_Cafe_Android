@@ -11,24 +11,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopapplication.EditMenuDialogFragment;
 import com.example.coffeeshopapplication.Interface_API.ApiService;
-import com.example.coffeeshopapplication.Interface_API.OnAddToCartClickListener;
 import com.example.coffeeshopapplication.Model.MenuResponse;
-import com.example.coffeeshopapplication.Model.ResponseUpdateStock;
+import com.example.coffeeshopapplication.Model.ResponseUpdate;
 import com.example.coffeeshopapplication.Product;
-import com.example.coffeeshopapplication.ProductFragment;
 import com.example.coffeeshopapplication.R;
 import com.example.coffeeshopapplication.Retrofit.ApiClient;
 import com.example.coffeeshopapplication.databinding.CartItemBinding;
 import com.example.coffeeshopapplication.Model.Menu;
 import com.squareup.picasso.Picasso;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
@@ -93,13 +88,16 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .error(R.drawable.default_image)
                     .into(holder.cartImage);
 
-            // Event untuk tombol edit
             holder.binding.editButton.setOnClickListener(v -> {
-                EditMenuDialogFragment dialog = new EditMenuDialogFragment((name, price, uri) -> {
+                EditMenuDialogFragment dialog = new EditMenuDialogFragment((name, price, uri, category) -> {
                     currentProduct.setName(name);
                     currentProduct.setPrice(Double.parseDouble(price));
-                    currentProduct.setImageUri(uri.toString()); // Update image URI if needed
+                    currentProduct.setImageUri(uri.toString());
+                    currentProduct.setCategory(category); // Tambahkan kategori
                     notifyItemChanged(position);
+
+                    // Kirim data perubahan ke API
+                    updateProductToApi(currentProduct.getId(), name, price, uri.toString(), category);
                 }, Uri.parse(currentProduct.getImageUri()), currentProduct.getId());
 
                 if (context instanceof FragmentActivity) {
@@ -107,10 +105,65 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     dialog.show(activity.getSupportFragmentManager(), "EditMenuDialog");
                 }
             });
+
         } else {
             Log.e("CartAdapter", "Cart items list is null or index out of bounds");
         }
     }
+
+    private void updateProductToApi(int productId, String name, String price, String imageUri, String category) {
+        if (name == null || name.trim().isEmpty()) {
+            Log.e("CartAdapter", "Name is invalid");
+            Toast.makeText(context, "Product name is required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            Double.parseDouble(price); // Memastikan harga valid
+        } catch (NumberFormatException e) {
+            Log.e("CartAdapter", "Price is invalid");
+            Toast.makeText(context, "Invalid price", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (imageUri == null || imageUri.trim().isEmpty()) {
+            Log.e("CartAdapter", "Image URI is invalid");
+            Toast.makeText(context, "Image is required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (category == null || category.trim().isEmpty()) {
+            Log.e("CartAdapter", "Category is invalid");
+            Toast.makeText(context, "Category is required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> productUpdate = new HashMap<>();
+        productUpdate.put("MenuName", name);
+        productUpdate.put("Price", Double.parseDouble(price));
+        productUpdate.put("ImageUrl", imageUri);
+        productUpdate.put("Category", category);
+
+        apiService.updateMenu(productId, productUpdate).enqueue(new Callback<ResponseUpdate>() {
+            @Override
+            public void onResponse(Call<ResponseUpdate> call, Response<ResponseUpdate> response) {
+                if (response.isSuccessful()) {
+                    Log.d("CartAdapter", "Product updated successfully.");
+                    Toast.makeText(context, "Product updated successfully.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("CartAdapter", "Failed to update product: " + response.message());
+                    Toast.makeText(context, "Failed to update product. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseUpdate> call, Throwable t) {
+                Log.e("CartAdapter", "Error updating product: " + t.getMessage());
+                Toast.makeText(context, "Error updating product. Please check your connection.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
 
     @Override
@@ -234,9 +287,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             stockUpdate.put("Stock", newStock); // Mengirim stok baru
 
             // Mengirim permintaan PUT ke API
-            apiService.updateStock(productId, stockUpdate).enqueue(new Callback<ResponseUpdateStock>() {
+            apiService.updateMenu(productId, stockUpdate).enqueue(new Callback<ResponseUpdate>() {
                 @Override
-                public void onResponse(Call<ResponseUpdateStock> call, Response<ResponseUpdateStock> response) {
+                public void onResponse(Call<ResponseUpdate> call, Response<ResponseUpdate> response) {
                     if (response.isSuccessful()) {
                         // Jika berhasil, cek pesan dan update UI jika stok berhasil diubah
                         if (response.body() != null && response.body().getMessage() != null && response.body().getMessage().equals("Stock updated successfully")) {
@@ -252,28 +305,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 }
 
                 @Override
-                public void onFailure(Call<ResponseUpdateStock> call, Throwable t) {
+                public void onFailure(Call<ResponseUpdate> call, Throwable t) {
                     Log.e("CartAdapter", "Error updating stock: " + t.getMessage());
                     Toast.makeText(context, "Failed to update stock. Please check your connection.", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-        private void fetchLatestMenuData() {
-            apiService.getMenu().enqueue(new Callback<MenuResponse>() {
-                @Override
-                public void onResponse(Call<MenuResponse> call, Response<MenuResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        updateMenuList(response.body().getMenuList());
-                        Log.d("CartAdapter", "Menu data updated from API.");
-                    } else {
-                        Log.e("CartAdapter", "Failed to fetch menu data: " + response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<MenuResponse> call, Throwable t) {
-                    Log.e("CartAdapter", "Error fetching menu data: " + t.getMessage());
                 }
             });
         }
@@ -336,26 +370,5 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 }
             });
         }
-
-
-
-//        private void updateCartItemToApi(int position) {
-//            Product product = cartItems.get(position);
-//            apiService.updateCartItem(product.getId(), product).enqueue(new Callback<Void>() {
-//                @Override
-//                public void onResponse(Call<Void> call, Response<Void> response) {
-//                    if (response.isSuccessful()) {
-//                        Log.d("CartAdapter", "Item updated in API successfully");
-//                    } else {
-//                        Log.e("CartAdapter", "Failed to update item in API");
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Call<Void> call, Throwable t) {
-//                    Log.e("CartAdapter", "Error updating item in API: " + t.getMessage());
-//                }
-//            });
-//        }
     }
 }

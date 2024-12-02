@@ -45,7 +45,7 @@
                 android:layout_height="36.9dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/capsule_edit_black"
-                android:drawableLeft="@drawable/pencil_svgrepo_com__1_"
+                android:drawableLeft="@drawable/ingredients_svgrepo_com__1_"
                 android:drawablePadding="9dp"
                 android:ems="10"
                 android:fontFamily="@font/sansation_regular"
@@ -85,9 +85,9 @@
                 android:text="Konfirmasi"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="@+id/editMenuPrice"
-                app:layout_constraintStart_toStartOf="@+id/editMenuPrice"
-                app:layout_constraintTop_toBottomOf="@+id/editMenuPrice" />
+                app:layout_constraintEnd_toEndOf="@+id/spinner_c_menu"
+                app:layout_constraintStart_toStartOf="@+id/spinner_c_menu"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_c_menu" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/changeImageButton"
@@ -106,6 +106,26 @@
                 app:layout_constraintEnd_toEndOf="@+id/editMenuImage"
                 app:layout_constraintStart_toStartOf="@+id/editMenuImage"
                 app:layout_constraintTop_toBottomOf="@+id/editMenuImage" />
+
+            <Spinner
+                android:id="@+id/spinner_c_menu"
+                android:layout_width="233.1dp"
+                android:layout_height="36.9dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/capsule_edit_black"
+                android:drawableLeft="@drawable/price_tag_svgrepo_com"
+                android:drawablePadding="6dp"
+                android:entries="@array/categories"
+                android:ems="10"
+                android:fontFamily="@font/sansation_regular"
+                android:hint="Harga"
+                android:inputType="text"
+                android:paddingLeft="14dp"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@+id/editMenuPrice"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/editMenuPrice"
+                app:layout_constraintTop_toBottomOf="@+id/editMenuPrice" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

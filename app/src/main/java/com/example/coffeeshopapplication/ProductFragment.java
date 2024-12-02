@@ -109,28 +109,6 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
     }
 
 
-
-    private void refreshMenuData() {
-        apiService.getMenu().enqueue(new Callback<MenuResponse>() {
-            @Override
-            public void onResponse(Call<MenuResponse> call, Response<MenuResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    fullMenuList.clear();
-                    fullMenuList.addAll(response.body().getMenuList());
-                    adapter.updateMenuList(fullMenuList);
-                } else {
-                    Log.e("ProductFragment", "Failed to refresh menu: " + response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MenuResponse> call, Throwable t) {
-                Log.e("ProductFragment", "Error refreshing menu: " + t.getMessage());
-            }
-        });
-    }
-
-
     @Override
     public void onAddToCart(String name, double price, int quantity) {
         Intent intent = new Intent(requireContext(), TransactionActivity.class);

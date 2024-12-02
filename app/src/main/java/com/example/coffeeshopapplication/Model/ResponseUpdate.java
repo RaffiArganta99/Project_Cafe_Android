@@ -1,15 +1,15 @@
 package com.example.coffeeshopapplication.Model;
 
-public class ResponseUpdateStock {
+public class ResponseUpdate {
     private String status;
     private int newStock;
     private String message;
 
     // Konstruktor default
-    public ResponseUpdateStock() {}
+    public ResponseUpdate() {}
 
     // Konstruktor dengan parameter
-    public ResponseUpdateStock(String status, int newStock, String message) {
+    public ResponseUpdate(String status, int newStock, String message) {
         this.status = status;
         this.newStock = newStock;
         this.message = message;
