@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +56,7 @@ public class EditMenuDialogFragment extends DialogFragment {
     private Uri imageUri;
     private ImageView menuImageView;
     private ApiService apiService;
-    private int productId; // ID produk untuk mengupdate API
+    private int productId; // ID produk untuk update
     private String selectedCategory; // Kategori yang dipilih
 
     public EditMenuDialogFragment(OnEditCompleteListener listener, Uri initialImageUri, int productId) {
@@ -78,13 +79,13 @@ public class EditMenuDialogFragment extends DialogFragment {
         Button changeImageButton = view.findViewById(R.id.changeImageButton);
         Spinner categorySpinner = view.findViewById(R.id.spinner_c_menu);
 
-        // Tampilkan gambar saat ini
+        // Tampilkan gambar awal
         menuImageView.setImageURI(imageUri);
 
-        // Inisialisasi spinner
+        // Inisialisasi spinner kategori
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 requireContext(),
-                R.array.category_array, // Array kategori didefinisikan di strings.xml
+                R.array.category_array, // Sumber array kategori di strings.xml
                 android.R.layout.simple_spinner_item
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -98,7 +99,7 @@ public class EditMenuDialogFragment extends DialogFragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                selectedCategory = null; // Atur kategori ke null jika tidak ada yang dipilih
+                selectedCategory = null; // Set kategori null jika tidak dipilih
             }
         });
 
@@ -112,11 +113,14 @@ public class EditMenuDialogFragment extends DialogFragment {
                 return;
             }
 
+            // Ambil nilai stock (misalnya, nilai default 0)
+            int stock = 0;  // Atau dapatkan dari input yang relevan
+
             // Jika gambar diubah, upload gambar terlebih dahulu
             if (imageUri != null) {
-                uploadImage(imageUri, name, price, selectedCategory); // Kirim data nama, harga, kategori bersama gambar
+                uploadImage(imageUri, name, price, selectedCategory, stock); // Kirim data bersama gambar dan stok
             } else {
-                updateProductToApi(productId, name, price, selectedCategory, null); // Jika tidak ada gambar, lanjutkan update produk
+                // Anda bisa memanggil metode lain untuk memperbarui produk tanpa gambar jika diperlukan
             }
         });
 
@@ -128,57 +132,53 @@ public class EditMenuDialogFragment extends DialogFragment {
         return view;
     }
 
-    private void uploadImage(Uri imageUri, String name, String price, String category) {
-        String imagePath = getPathFromUri(imageUri); // Mendapatkan path dari Uri
-        File imageFile = new File(imagePath);  // imagePath adalah path gambar
-        RequestBody requestBody = RequestBody.create(MultipartBody.FORM, imageFile);
-        MultipartBody.Part imagePart = MultipartBody.Part.createFormData("imageUrl", imageFile.getName(), requestBody);
+    private void uploadImage(Uri imageUri, String name, String price, String category, int stock) {
+        // Ensure all parameters are provided
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(price) || TextUtils.isEmpty(category)) {
+            Toast.makeText(requireContext(), "All fields are required", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Mengirim request API untuk upload gambar
-        apiService.updateMenuImage(productId, "updateImage", imagePart).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        // Parsing JSON response
-                        String responseString = response.body().string();
-                        JSONObject jsonResponse = new JSONObject(responseString);
+        String imagePath = getPathFromUri(imageUri);
+        File imageFile = new File(imagePath);
 
-                        // Periksa jika status sukses dan ambil updated_id
-                        if ("success".equals(jsonResponse.getString("status"))) {
-                            String updatedId = jsonResponse.getString("updated_id");
+        RequestBody idBody = RequestBody.create(MultipartBody.FORM, String.valueOf(productId));
+        RequestBody nameBody = RequestBody.create(MultipartBody.FORM, name);
+        RequestBody priceBody = RequestBody.create(MultipartBody.FORM, price);
+        RequestBody categoryBody = RequestBody.create(MultipartBody.FORM, category);
+        RequestBody stockBody = RequestBody.create(MultipartBody.FORM, String.valueOf(stock));
 
-                            // Cek apakah imageUrl ada dalam respons
-                            String imageUrl = null;
-                            if (jsonResponse.has("imageUrl")) {
-                                imageUrl = jsonResponse.getString("imageUrl"); // Ambil imageUrl jika ada
-                            }
+        MultipartBody.Part imagePart = null;
+        if (imageUri != null) {
+            RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), imageFile);
+            imagePart = MultipartBody.Part.createFormData("imageUrl", imageFile.getName(), requestBody);
+        }
 
-                            // Lanjutkan untuk update produk menggunakan imageUrl (jika ada)
-                            updateProductToApi(productId, name, price, selectedCategory, imageUrl);
-                        } else {
-                            Log.e("API", "Failed to upload image: " + jsonResponse.getString("message"));
-                        }
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    // Handle failure
-                    Log.e("API", "Failed to upload image: " + response.message());
-                }
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // Handle error
-                Log.e("API", "Error: " + t.getMessage());
-            }
-        });
+//        apiService.updateMenu(idBody, nameBody, priceBody, categoryBody, stockBody, imagePart)
+//                .enqueue(new Callback<ResponseUpdate>() {
+//                    @Override
+//                    public void onResponse(Call<ResponseUpdate> call, Response<ResponseUpdate> response) {
+//                        if (response.isSuccessful() && response.body() != null) {
+//                            Toast.makeText(requireContext(), "Product updated successfully.", Toast.LENGTH_SHORT).show();
+//                            listener.onEditComplete(name, price, imageUri, category);
+//                            dismiss();
+//                        } else {
+//                            Toast.makeText(requireContext(), "Failed to update product: " + response.message(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ResponseUpdate> call, Throwable t) {
+//                        Toast.makeText(requireContext(), "Error updating product: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
     }
 
-    // Fungsi untuk mendapatkan path dari URI
+
+
     private String getPathFromUri(Uri uri) {
         String path = null;
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {MediaStore.Images.Media.DATA};
         try (Cursor cursor = requireContext().getContentResolver().query(uri, projection, null, null, null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
@@ -187,48 +187,6 @@ public class EditMenuDialogFragment extends DialogFragment {
         }
         return path;
     }
-
-    private void updateProductToApi(int productId, String name, String price, String category, String imageUrl) {
-        // Persiapkan data untuk dikirim
-        Map<String, Object> productUpdate = new HashMap<>();
-        productUpdate.put("MenuName", name);
-        productUpdate.put("Price", Double.parseDouble(price)); // pastikan harga valid
-        productUpdate.put("Category", category);
-        productUpdate.put("ImageUrl", imageUrl != null ? imageUrl : ""); // Gambar URL jika ada
-
-        // Panggil API
-        apiService.updateMenu(productId, productUpdate).enqueue(new Callback<ResponseUpdate>() {
-            @Override
-            public void onResponse(Call<ResponseUpdate> call, Response<ResponseUpdate> response) {
-                if (!isAdded()) { // Pastikan fragment masih terhubung
-                    Log.w("EditMenuDialogFragment", "Fragment not attached to context. Skipping response handling.");
-                    return;
-                }
-
-                if (response.isSuccessful()) {
-                    Context context = getContext(); // Gunakan context yang aman
-                    if (context != null) {
-                        Toast.makeText(context, "Product updated successfully", Toast.LENGTH_SHORT).show();
-                    }
-                    dismiss(); // Tutup dialog jika fragment masih terhubung
-                } else {
-                    Log.e("EditMenuDialogFragment", "Failed to update product: " + response.message());
-                    Context context = getContext();
-                    if (context != null) {
-                        Toast.makeText(context, "Failed to update product", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseUpdate> call, Throwable t) {
-                Log.e("EditMenuDialog", "Error updating product: " + t.getMessage());
-                Toast.makeText(requireContext(), "Error updating product", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-
 
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -244,6 +202,7 @@ public class EditMenuDialogFragment extends DialogFragment {
         }
     }
 }
+
 
 
 

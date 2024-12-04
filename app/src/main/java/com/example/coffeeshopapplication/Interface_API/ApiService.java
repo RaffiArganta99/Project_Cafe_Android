@@ -37,22 +37,12 @@ public interface ApiService {
             @Part MultipartBody.Part imageUrl
     );
 
-
     @PUT("MenuApi.php")
     Call<ResponseUpdate> updateMenu(
             @Query("id") int id,
             @Body Map<String, Object> productUpdate
 
     );
-
-    @Multipart
-    @POST("MenuApi.php")
-    Call<ResponseBody> updateMenuImage(
-            @Query("id") int id, // Menggunakan @Query untuk query string
-            @Query("action") String action, // Menambahkan action sebagai query parameter
-            @Part MultipartBody.Part imageUrl
-    );
-
 
     @DELETE("MenuApi.php")
     Call<Void> deleteCartItem(@Query("id") int id);

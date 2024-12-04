@@ -25,6 +25,9 @@ import com.example.coffeeshopapplication.databinding.CartItemBinding;
 import com.example.coffeeshopapplication.Model.Menu;
 import com.squareup.picasso.Picasso;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -96,8 +99,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     currentProduct.setCategory(category); // Tambahkan kategori
                     notifyItemChanged(position);
 
-                    // Kirim data perubahan ke API
-                    updateProductToApi(currentProduct.getId(), name, price, uri.toString(), category);
                 }, Uri.parse(currentProduct.getImageUri()), currentProduct.getId());
 
                 if (context instanceof FragmentActivity) {
@@ -110,60 +111,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             Log.e("CartAdapter", "Cart items list is null or index out of bounds");
         }
     }
-
-    private void updateProductToApi(int productId, String name, String price, String imageUri, String category) {
-        if (name == null || name.trim().isEmpty()) {
-            Log.e("CartAdapter", "Name is invalid");
-            Toast.makeText(context, "Product name is required", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            Double.parseDouble(price); // Memastikan harga valid
-        } catch (NumberFormatException e) {
-            Log.e("CartAdapter", "Price is invalid");
-            Toast.makeText(context, "Invalid price", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (imageUri == null || imageUri.trim().isEmpty()) {
-            Log.e("CartAdapter", "Image URI is invalid");
-            Toast.makeText(context, "Image is required", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (category == null || category.trim().isEmpty()) {
-            Log.e("CartAdapter", "Category is invalid");
-            Toast.makeText(context, "Category is required", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Map<String, Object> productUpdate = new HashMap<>();
-        productUpdate.put("MenuName", name);
-        productUpdate.put("Price", Double.parseDouble(price));
-        productUpdate.put("ImageUrl", imageUri);
-        productUpdate.put("Category", category);
-
-        apiService.updateMenu(productId, productUpdate).enqueue(new Callback<ResponseUpdate>() {
-            @Override
-            public void onResponse(Call<ResponseUpdate> call, Response<ResponseUpdate> response) {
-                if (response.isSuccessful()) {
-                    Log.d("CartAdapter", "Product updated successfully.");
-                    Toast.makeText(context, "Product updated successfully.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.e("CartAdapter", "Failed to update product: " + response.message());
-                    Toast.makeText(context, "Failed to update product. Please try again.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseUpdate> call, Throwable t) {
-                Log.e("CartAdapter", "Error updating product: " + t.getMessage());
-                Toast.makeText(context, "Error updating product. Please check your connection.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 
 
     @Override
@@ -313,6 +260,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         }
 
 
+
+
         private void deleteItem(int position) {
             Product product = cartItems.get(position);
 
@@ -349,8 +298,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .setNegativeButton("No", null)
                     .show();
         }
-
-
 
         private void syncMenuData() {
             apiService.getMenu().enqueue(new Callback<MenuResponse>() {

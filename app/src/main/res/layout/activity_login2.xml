@@ -8,27 +8,16 @@
     android:background="#FFFFFF"
     tools:context=".LoginActivity">
 
-    <ImageButton
-        android:id="@+id/imageView3"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="363dp"
-        android:background="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/return15" />
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="290dp"
         android:layout_height="140dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="95dp"
         android:layout_marginEnd="120dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/hey_welcome_back_" />
 
     <EditText
