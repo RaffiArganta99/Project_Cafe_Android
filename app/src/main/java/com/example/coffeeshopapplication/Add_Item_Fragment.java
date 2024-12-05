@@ -181,7 +181,7 @@ public class Add_Item_Fragment extends Fragment {
         RequestBody categoryPart = RequestBody.create(MediaType.parse("text/plain"), category);
         RequestBody descriptionPart = RequestBody.create(MediaType.parse("text/plain"), description);
 
-        RequestBody requestFile = RequestBody.create(file, MediaType.parse("image/*"));
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
         MultipartBody.Part imagePart = MultipartBody.Part.createFormData("imageUrl", file.getName(), requestFile);
 
         ApiService apiService = ApiClient.getApiService();
@@ -256,5 +256,3 @@ public class Add_Item_Fragment extends Fragment {
         }
     }
 }
-
-

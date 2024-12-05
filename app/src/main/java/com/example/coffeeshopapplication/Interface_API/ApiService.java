@@ -3,6 +3,8 @@ package com.example.coffeeshopapplication.Interface_API;
 import com.example.coffeeshopapplication.Model.MenuResponse;
 import com.example.coffeeshopapplication.Model.LoginResponse;
 import com.example.coffeeshopapplication.Model.ResponseUpdate;
+import com.example.coffeeshopapplication.Model.OrdersResponse;
+
 
 import java.util.Map;
 
@@ -44,6 +46,8 @@ public interface ApiService {
 
     );
 
+
+
     @DELETE("MenuApi.php")
     Call<Void> deleteCartItem(@Query("id") int id);
 
@@ -56,4 +60,8 @@ public interface ApiService {
             @Field("Email") String email,
             @Field("Password") String password
     );
+    // Endpoint untuk mendapatkan semua order
+    @GET("order/getAllOrders") // Sesuaikan endpoint ini dengan API Anda
+    Call<OrdersResponse> getAllOrders();
 }
+
