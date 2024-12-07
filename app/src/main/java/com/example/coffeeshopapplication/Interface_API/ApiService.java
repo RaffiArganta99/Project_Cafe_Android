@@ -5,6 +5,7 @@ import com.example.coffeeshopapplication.Model.CartResponse;
 import com.example.coffeeshopapplication.Model.DeleteCartRequest;
 import com.example.coffeeshopapplication.Model.MenuResponse;
 import com.example.coffeeshopapplication.Model.LoginResponse;
+import com.example.coffeeshopapplication.Model.OrdersResponse;
 import com.example.coffeeshopapplication.Model.ResponseUpdate;
 import com.example.coffeeshopapplication.Model.UpdateCartRequest;
 
@@ -60,6 +61,10 @@ public interface ApiService {
             @Field("Email") String email,
             @Field("Password") String password
     );
+
+    // Endpoint untuk mendapatkan semua order
+    @GET("order/getAllOrders") // Sesuaikan endpoint ini dengan API Anda
+    Call<OrdersResponse> getAllOrders();
 
     @POST("CartApi.php")
     Call<ApiResponse> addToCart(@Body Map<String, Object> requestBody);
