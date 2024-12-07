@@ -13,7 +13,7 @@ import com.example.coffeeshopapplication.adapter.PopulerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class  HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private PopulerAdapter populerAdapter;

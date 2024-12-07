@@ -43,6 +43,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView29" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/HistoryRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
@@ -60,9 +61,6 @@
         android:background="@android:color/transparent"
         android:src="@drawable/bell_ring_svgrepo_com__1_"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" /><![CDATA[
-
-    />
-]]>
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
