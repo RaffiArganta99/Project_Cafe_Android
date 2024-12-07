@@ -26,9 +26,9 @@ public class FragmentMainActivity extends AppCompatActivity {
 
             // Cek ID item yang dipilih, lalu ganti fragment yang sesuai
             if (id == R.id.home_nav) {
-                replaceFragment(new HomeFragment());
+                replaceFragment(new ProductFragment());  // Ganti HomeFragment dengan TransactionFragment
             } else if (id == R.id.product_nav) {
-                replaceFragment(new ProductFragment());
+                replaceFragment(new TransactionFragment());
             } else if (id == R.id.add_nav) {
                 replaceFragment(new Add_Item_Fragment());
             } else if (id == R.id.list_nav) {
@@ -41,7 +41,7 @@ public class FragmentMainActivity extends AppCompatActivity {
 
         // Memuat fragment default ketika Activity pertama kali diluncurkan
         if (savedInstanceState == null) {
-            replaceFragment(new HomeFragment()); // Fragment default adalah HomeFragment
+            replaceFragment(new ProductFragment()); // Fragment default adalah TransactionFragment
         }
     }
 

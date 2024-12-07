@@ -1,6 +1,7 @@
 package com.example.coffeeshopapplication.adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopapplication.EditMenuDialogFragment;
 import com.example.coffeeshopapplication.Interface_API.ApiService;
+import com.example.coffeeshopapplication.Model.ApiResponse;
 import com.example.coffeeshopapplication.Model.MenuResponse;
 import com.example.coffeeshopapplication.Model.ResponseUpdate;
 import com.example.coffeeshopapplication.Product;
@@ -25,9 +27,6 @@ import com.example.coffeeshopapplication.databinding.CartItemBinding;
 import com.example.coffeeshopapplication.Model.Menu;
 import com.squareup.picasso.Picasso;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,17 +43,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private final OnAddToCartClickListener listener;
     private final ApiService apiService;
     private List<Menu> menuList;
+    private final int customerId; // Tambahkan ini
 
     public interface OnAddToCartClickListener {
         void onAddToCart(String name, double price, int stock);
+        void onItemCartClick(Product product);  // Menambahkan metode ini
     }
 
-    public CartAdapter(Context context, ArrayList<Product> cartItems, OnAddToCartClickListener listener) {
+    public CartAdapter(Context context, ArrayList<Product> cartItems, OnAddToCartClickListener listener, int customerId) {
         this.context = context;
         this.cartItems = cartItems;
         this.listener = listener;
         this.apiService = ApiClient.getApiService();
         this.menuList = new ArrayList<>();
+        this.customerId = 1;  // Mengatur customerId tetap dengan nilai 1
+
     }
 
     @NonNull
@@ -71,12 +74,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
             holder.cartFoodName.setText(currentProduct.getName());
 
+            holder.binding.ItemCart.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemCartClick(currentProduct);
+                }
+            });
+
             // Menampilkan kategori
-            if (currentProduct.getCategory() != null && !currentProduct.getCategory().isEmpty()) {
-                holder.cartItemCategory.setText(currentProduct.getCategory());
-            } else {
-                holder.cartItemCategory.setText("Unknown");
-            }
+            holder.cartItemCategory.setText(
+                    currentProduct.getCategory() != null && !currentProduct.getCategory().isEmpty()
+                            ? currentProduct.getCategory()
+                            : "Unknown"
+            );
 
             // Menampilkan harga
             holder.cartItemPrice.setText(String.format("Rp %.2f", currentProduct.getPrice()));
@@ -91,14 +100,24 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .error(R.drawable.default_image)
                     .into(holder.cartImage);
 
+            // Tombol Add to Cart
+            holder.binding.ItemCart.setOnClickListener(v -> {
+                // Pastikan currentProduct berisi informasi yang dibutuhkan
+                int customerId = getCustomerId(); // Anda harus memiliki metode untuk mendapatkan customerId
+                int menuId = currentProduct.getId(); // Ambil ID produk dari currentProduct
+                int quantity = 1; // Jumlah default yang ditambahkan ke cart (misalnya 1)
+
+                addToCart(customerId, menuId, quantity); // Gunakan customerId
+            });
+
+
             holder.binding.editButton.setOnClickListener(v -> {
                 EditMenuDialogFragment dialog = new EditMenuDialogFragment((name, price, uri, category) -> {
                     currentProduct.setName(name);
                     currentProduct.setPrice(Double.parseDouble(price));
                     currentProduct.setImageUri(uri.toString());
-                    currentProduct.setCategory(category); // Tambahkan kategori
+                    currentProduct.setCategory(category);
                     notifyItemChanged(position);
-
                 }, Uri.parse(currentProduct.getImageUri()), currentProduct.getId());
 
                 if (context instanceof FragmentActivity) {
@@ -106,11 +125,50 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     dialog.show(activity.getSupportFragmentManager(), "EditMenuDialog");
                 }
             });
-
         } else {
             Log.e("CartAdapter", "Cart items list is null or index out of bounds");
         }
     }
+
+    // Mengambil customerId dari SharedPreferences
+    private int getCustomerId() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+        return 1;  // Mengembalikan nilai tetap 1 untuk customerId
+    }
+
+    private void addToCart(int customerId, int menuId, int quantity) {
+        if (customerId == -1) {
+            Log.e("AddToCart", "Customer ID tidak ditemukan");
+            Toast.makeText(context, "Customer ID tidak valid. Silakan login ulang.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("customerId", customerId);
+        requestBody.put("menuId", menuId);
+        requestBody.put("quantity", quantity);
+
+        apiService.addToCart(requestBody).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("AddToCart", "Success: " + response.body().getMessage());
+                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("AddToCart", "Failed: " + response.message());
+                    Toast.makeText(context, "Failed to add to cart. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.e("AddToCart", "Error: " + t.getMessage());
+                Toast.makeText(context, "Error adding to cart. Please check your connection.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 
 
     @Override
@@ -259,9 +317,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             });
         }
 
-
-
-
         private void deleteItem(int position) {
             Product product = cartItems.get(position);
 
@@ -271,7 +326,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .setMessage("Are you sure you want to delete this item?")
                     .setPositiveButton("Yes", (dialog, which) -> {
                         // Jika pengguna mengkonfirmasi penghapusan
-                        apiService.deleteCartItem(product.getId()).enqueue(new Callback<Void>() {
+                        apiService. deleteCartItem(product.getId()).enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.isSuccessful()) {

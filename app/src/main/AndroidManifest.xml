@@ -22,7 +22,7 @@
         android:theme="@style/Theme.Coffeeshopapplication"
         tools:targetApi="31">
         <activity
-            android:name=".TransactionActivity"
+            android:name=".TransactionFragment"
             android:exported="false" />
         <activity
             android:name=".FragmentMainActivity"

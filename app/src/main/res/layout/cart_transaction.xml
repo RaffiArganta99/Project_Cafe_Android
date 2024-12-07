@@ -7,34 +7,90 @@
     android:layout_margin="5dp">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="318.672dp"
-        android:layout_height="57.015dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="spread">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_height="wrap_content"
+            android:padding="8dp">
 
             <ImageView
                 android:id="@+id/cartImage_t"
-                android:layout_width="55.71dp"
-                android:layout_height="43.59dp"
-                android:layout_marginStart="8dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:srcCompat="@drawable/default_image" />
 
-            <ImageButton
+            <TextView
+                android:id="@+id/cartFoodName_t"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="TextView"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@+id/cartImage_t"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/delete_t"/>
+
+            <TextView
+                android:id="@+id/cartItemPrice_t"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="TextView"
+                app:layout_constraintStart_toEndOf="@+id/cartImage_t"
+                app:layout_constraintTop_toBottomOf="@+id/cartFoodName_t" />
+
+            <TextView
+                android:id="@+id/cartItemStock_t"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="TextView"
+                app:layout_constraintStart_toEndOf="@+id/cartItemPrice_t"
+                app:layout_constraintTop_toBottomOf="@+id/cartFoodName_t" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/minus_t"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/minus_square_svgrepo_com"
+                app:layout_constraintBottom_toBottomOf="@+id/plus_t"
+                app:layout_constraintEnd_toStartOf="@+id/Quantity_t"
+                app:layout_constraintTop_toTopOf="@+id/plus_t"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/Quantity_t"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:text="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/plus_t"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/plus_t"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:background="@drawable/plus_square_svgrepo_com"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/delete_t"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,58 +100,6 @@
                 app:layout_constraintEnd_toStartOf="@+id/minus_t"
                 app:layout_constraintTop_toTopOf="@+id/minus_t"
                 app:srcCompat="@drawable/rubbish_bin_svgrepo_com" />
-
-            <TextView
-                android:id="@+id/cartFoodName_t"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="TextView"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toTopOf="@+id/cartItemPrice_t"
-                app:layout_constraintStart_toEndOf="@+id/cartImage_t"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/cartItemPrice_t"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="TextView"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cartImage_t"
-                app:layout_constraintTop_toBottomOf="@+id/cartFoodName_t" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/minus_t"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/minus_square_svgrepo_com"
-                app:layout_constraintBottom_toBottomOf="@+id/Quantity_t"
-                app:layout_constraintEnd_toStartOf="@+id/Quantity_t"
-                app:layout_constraintTop_toTopOf="@+id/Quantity_t" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/plus_t"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:background="@drawable/plus_square_svgrepo_com"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
-
-            <TextView
-                android:id="@+id/Quantity_t"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="1"
-                app:layout_constraintBottom_toBottomOf="@+id/plus_t"
-                app:layout_constraintEnd_toStartOf="@+id/plus_t"
-                app:layout_constraintTop_toTopOf="@+id/plus_t" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

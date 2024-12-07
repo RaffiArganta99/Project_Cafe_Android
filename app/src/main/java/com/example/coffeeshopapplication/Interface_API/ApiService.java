@@ -1,8 +1,12 @@
 package com.example.coffeeshopapplication.Interface_API;
 
+import com.example.coffeeshopapplication.Model.ApiResponse;
+import com.example.coffeeshopapplication.Model.CartResponse;
+import com.example.coffeeshopapplication.Model.DeleteCartRequest;
 import com.example.coffeeshopapplication.Model.MenuResponse;
 import com.example.coffeeshopapplication.Model.LoginResponse;
 import com.example.coffeeshopapplication.Model.ResponseUpdate;
+import com.example.coffeeshopapplication.Model.UpdateCartRequest;
 
 import java.util.Map;
 
@@ -15,14 +19,16 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
+
+    // API untuk Menu
     @GET("MenuApi.php")
     Call<MenuResponse> getMenu();
 
@@ -41,12 +47,10 @@ public interface ApiService {
     Call<ResponseUpdate> updateMenu(
             @Query("id") int id,
             @Body Map<String, Object> productUpdate
-
     );
 
     @DELETE("MenuApi.php")
     Call<Void> deleteCartItem(@Query("id") int id);
-
 
     // Endpoint untuk login menggunakan parameter FormUrlEncoded
     @FormUrlEncoded
@@ -56,4 +60,24 @@ public interface ApiService {
             @Field("Email") String email,
             @Field("Password") String password
     );
+
+    @POST("CartApi.php")
+    Call<ApiResponse> addToCart(@Body Map<String, Object> requestBody);
+
+    // Mengambil daftar keranjang
+    @GET("CartApi.php")
+    Call<CartResponse> getCart();
+
+    // Memperbarui keranjang (Quantity +/-)
+    @PUT("CartApi.php")
+    Call<ApiResponse> updateCart(@Body UpdateCartRequest request);
+
+    @HTTP(method = "DELETE", path = "CartApi.php", hasBody = true)
+    Call<ApiResponse> deleteCart(@Body DeleteCartRequest request);
+
+
+    // Menghapus semua item dari keranjang untuk CustomerId tertentu
+    @DELETE("CartApi.php?action=delete-all")
+    Call<ApiResponse> deleteAllCart(@Query("customerId") int customerId);
+
 }

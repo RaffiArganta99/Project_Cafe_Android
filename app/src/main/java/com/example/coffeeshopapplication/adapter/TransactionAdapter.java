@@ -1,40 +1,85 @@
 package com.example.coffeeshopapplication.adapter;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.coffeeshopapplication.Interface_API.ApiService;
+import com.example.coffeeshopapplication.Interface_API.OnTransactionItemListener;
+import com.example.coffeeshopapplication.Model.ApiResponse;
+import com.example.coffeeshopapplication.Model.CartResponse;
+import com.example.coffeeshopapplication.Model.DeleteCartRequest;
+import com.example.coffeeshopapplication.Model.UpdateCartRequest;
 import com.example.coffeeshopapplication.R;
+import com.example.coffeeshopapplication.Retrofit.ApiClient;
 import com.example.coffeeshopapplication.TransactionItem;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
 
-    private List<TransactionItem> transactionItems;
+    private List<CartResponse.CartItem> transactionItems;
+    private Context context;
+    private int customerId;
+    private OnTransactionItemListener listener;
 
-    // Constructor untuk menerima data
-    public TransactionAdapter(List<TransactionItem> transactionItems) {
+    private ApiService apiService;
+
+    public TransactionAdapter(Context context, List<CartResponse.CartItem> transactionItems, int customerId, OnTransactionItemListener listener) {
+        this.context = context;
         this.transactionItems = transactionItems;
+        this.customerId = customerId;
+        this.listener = listener;
+        apiService = ApiClient.getApiService();
     }
 
     @NonNull
     @Override
     public TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate layout item untuk setiap baris (pastikan menggunakan cart_transaction.xml)
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_transaction, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.cart_transaction, parent, false);
         return new TransactionViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
-        // Menyiapkan data untuk setiap item
-        TransactionItem currentItem = transactionItems.get(position);
-        holder.nameTextView.setText(currentItem.getName());
-        holder.priceTextView.setText(currentItem.getPrice());
+        CartResponse.CartItem currentItem = transactionItems.get(position);
+
+        // Binding data ke TextView
+        holder.nameTextView.setText(currentItem.getMenuName());
+        holder.priceTextView.setText(String.valueOf(currentItem.getPrice()));
         holder.quantityTextView.setText(String.valueOf(currentItem.getQuantity()));
+        holder.stockTextView.setText("Stock: " + currentItem.getStock());
+
+        // Menggunakan Picasso untuk memuat gambar dari URL
+        Picasso.get()
+                .load(currentItem.getImageUrl())
+                .placeholder(R.drawable.default_image)
+                .error(R.drawable.default_image)
+                .into(holder.cartImageView);
+
+        // Mengatur klik listener untuk tombol-tombol
+        holder.plusButton.setOnClickListener(v -> listener.onQuantityChange(position, currentItem.getQuantity() + 1));
+        holder.minusButton.setOnClickListener(v -> listener.onQuantityChange(position, currentItem.getQuantity() - 1));
+        holder.deleteButton.setOnClickListener(v -> deleteItem(position));
+
     }
 
     @Override
@@ -42,17 +87,57 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         return transactionItems.size();
     }
 
-    // ViewHolder untuk item transaksi
-    public class TransactionViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView, priceTextView, quantityTextView;
-        ImageView imageView;
+    public void updateItem(int position, CartResponse.CartItem item) {
+        transactionItems.set(position, item);
+        notifyItemChanged(position);
+    }
 
+    public void deleteItem(int position) {
+        CartResponse.CartItem item = transactionItems.get(position);
+        DeleteCartRequest request = new DeleteCartRequest(item.getCartId(), customerId);
+
+        apiService.deleteCart(request).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    // Menghapus item dari daftar lokal Adapter
+                    transactionItems.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, transactionItems.size());
+
+                    Toast.makeText(context, "Item berhasil dihapus", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Gagal menghapus item", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(context, "Kesalahan koneksi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public class TransactionViewHolder extends RecyclerView.ViewHolder {
+        TextView nameTextView, priceTextView, quantityTextView, stockTextView;
+        ImageView cartImageView;
+        AppCompatImageButton plusButton, minusButton;
+        AppCompatImageButton deleteButton;
+
+
+        @SuppressLint("WrongViewCast")
         public TransactionViewHolder(View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.cartFoodName_t);
             priceTextView = itemView.findViewById(R.id.cartItemPrice_t);
             quantityTextView = itemView.findViewById(R.id.Quantity_t);
-            imageView = itemView.findViewById(R.id.cartImage_t);
+            stockTextView = itemView.findViewById(R.id.cartItemStock_t);
+            cartImageView = itemView.findViewById(R.id.cartImage_t);
+            plusButton = itemView.findViewById(R.id.plus_t);
+            minusButton = itemView.findViewById(R.id.minus_t);
+            deleteButton = itemView.findViewById(R.id.delete_t);
         }
     }
 }
+
+
