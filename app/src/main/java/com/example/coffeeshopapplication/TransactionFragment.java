@@ -63,11 +63,12 @@ public class TransactionFragment extends Fragment {
 
             @Override
             public void onDeleteItem(int position) {
-                adapter.deleteItem(position);
-                refreshCartData();  // Pastikan data diperbarui dari server
-                calculateTotal();
-            }
+                // Debugging log
+                Log.d("DeleteItem", "Listener onDeleteItem called for position: " + position);
 
+                // Refresh data dari server
+                loadCartData();
+            }
         });
 
         recyclerTransaction.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -84,19 +85,37 @@ public class TransactionFragment extends Fragment {
             @Override
             public void onResponse(Call<CartResponse> call, Response<CartResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    // Log untuk debugging
+                    Log.d("LoadCart", "Loaded cart items: " + response.body().getData().size());
+
+                    // Bersihkan data sebelumnya
                     transactionItems.clear();
+
+                    // Tambahkan data baru
                     transactionItems.addAll(response.body().getData());
+
+                    // Refresh adapter secara menyeluruh
                     adapter.notifyDataSetChanged();
+
                     calculateTotal();
+                } else {
+                    Log.e("LoadCart", "Response not successful");
                 }
             }
 
             @Override
             public void onFailure(Call<CartResponse> call, Throwable t) {
-                Log.e("LoadCart", "Failed to load cart data.");
+                Log.e("LoadCart", "Failed to load cart data", t);
+                Toast.makeText(getContext(), "Gagal memuat data keranjang", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    // Modifikasi method refreshCartData
+    private void refreshCartData() {
+        loadCartData(); // Gunakan method loadCartData yang sudah diperbarui
+    }
+
 
     private void calculateTotal() {
         int total = 0;
@@ -104,28 +123,6 @@ public class TransactionFragment extends Fragment {
             total += item.getPrice() * item.getQuantity();
         }
         totalText.setText(String.valueOf(total));
-    }
-
-    private void refreshCartData() {
-        ApiService apiService = ApiClient.getApiService();
-        apiService.getCart().enqueue(new Callback<CartResponse>() {
-            @Override
-            public void onResponse(Call<CartResponse> call, Response<CartResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    transactionItems.clear();
-                    transactionItems.addAll(response.body().getData());
-
-                    // Memastikan Adapter mendapatkan pembaruan data
-                    adapter.notifyDataSetChanged();
-                    calculateTotal();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<CartResponse> call, Throwable t) {
-                Log.e("RefreshCart", "Failed to reload cart data.");
-            }
-        });
     }
 
 }

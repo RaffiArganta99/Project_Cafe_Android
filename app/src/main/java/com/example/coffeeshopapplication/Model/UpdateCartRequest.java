@@ -1,8 +1,14 @@
 package com.example.coffeeshopapplication.Model;
+import com.google.gson.annotations.SerializedName;
 
 public class UpdateCartRequest {
+    @SerializedName("customerId")
     private int customerId;
+
+    @SerializedName("cartId")
     private int cartId;
+
+    @SerializedName("quantityChange")
     private int quantityChange;
 
     // Constructor
@@ -37,4 +43,6 @@ public class UpdateCartRequest {
         this.quantityChange = quantityChange;
     }
 }
+
+
 

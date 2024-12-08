@@ -80,6 +80,17 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         holder.minusButton.setOnClickListener(v -> listener.onQuantityChange(position, currentItem.getQuantity() - 1));
         holder.deleteButton.setOnClickListener(v -> deleteItem(position));
 
+        holder.plusButton.setOnClickListener(v -> {
+            int quantityChange = 1; // Tambah 1
+            updateCartItem(position, quantityChange);
+        });
+
+        holder.minusButton.setOnClickListener(v -> {
+            int quantityChange = -1; // Kurangi 1
+            updateCartItem(position, quantityChange);
+        });
+
+
     }
 
     @Override
@@ -99,11 +110,21 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         apiService.deleteCart(request).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    // Menghapus item dari daftar lokal Adapter
+                if (response.isSuccessful() && response.body() != null) {
+                    // Log untuk debugging
+                    Log.d("DeleteCart", "Delete response: " + response.body().getMessage());
+
+                    // Hapus item dari list lokal
                     transactionItems.remove(position);
+
+                    // Refresh UI
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, transactionItems.size());
+
+                    // Pastikan listener dipanggil
+                    if (listener != null) {
+                        listener.onDeleteItem(position);
+                    }
 
                     Toast.makeText(context, "Item berhasil dihapus", Toast.LENGTH_SHORT).show();
                 } else {
@@ -113,10 +134,52 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.e("DeleteCart", "Delete failed", t);
                 Toast.makeText(context, "Kesalahan koneksi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
+    private void updateCartItem(int position, int quantityChange) {
+        CartResponse.CartItem item = transactionItems.get(position);
+        int newQuantity = item.getQuantity() + quantityChange;
+
+        // Validasi perubahan quantity
+        if (newQuantity < 1 || newQuantity > item.getStock()) {
+            Toast.makeText(context, "Quantity tidak valid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Kirim request ke API
+        UpdateCartRequest request = new UpdateCartRequest(customerId, item.getCartId(), quantityChange);
+
+        apiService.updateCart(request).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Gunakan kuantitas yang dihitung secara lokal
+                    item.setQuantity(newQuantity);
+                    transactionItems.set(position, item);
+                    notifyItemChanged(position); // Memperbarui RecyclerView
+
+                    Log.d("RecyclerViewUpdate", "Item at position " + position + " updated with quantity: " + newQuantity);
+                    Toast.makeText(context, "Quantity berhasil diperbarui", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("UpdateCart", "Response Error: " + response.message());
+                    Toast.makeText(context, "Gagal memperbarui quantity", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.e("UpdateCart", "Request Failed: " + t.getMessage());
+                Toast.makeText(context, "Kesalahan koneksi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     public class TransactionViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView, priceTextView, quantityTextView, stockTextView;

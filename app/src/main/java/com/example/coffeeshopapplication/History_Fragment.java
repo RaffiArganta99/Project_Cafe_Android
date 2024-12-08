@@ -31,7 +31,7 @@ public class History_Fragment extends Fragment {
     private RecyclerView recyclerView;
     private OrderAdapter orderAdapter;
 
-    private static final String BASE_URL = "http://yourserver.com/api/"; // Ganti dengan URL API Anda
+    private static final String BASE_URL = "http://192.168.1.13/CafeBonanza/app/controllers/api/"; // Ganti dengan URL API Anda
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

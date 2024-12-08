@@ -4,12 +4,14 @@ import com.google.gson.annotations.SerializedName;
 
 public class ApiResponse {
     @SerializedName("success")
-    private boolean success; // Tambahkan properti success
+    private boolean success;
 
     @SerializedName("message")
     private String message;
 
-    // Getter dan setter untuk success
+    @SerializedName("data")
+    private Data data;
+
     public boolean isSuccess() {
         return success;
     }
@@ -18,13 +20,33 @@ public class ApiResponse {
         this.success = success;
     }
 
-    // Getter dan setter untuk message
     public String getMessage() {
         return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public static class Data {
+        @SerializedName("Quantity")
+        private int quantity;
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
     }
 }
 
