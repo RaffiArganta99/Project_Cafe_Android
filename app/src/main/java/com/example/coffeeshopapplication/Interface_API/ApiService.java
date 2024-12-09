@@ -62,8 +62,7 @@ public interface ApiService {
             @Field("Password") String password
     );
 
-    // Endpoint untuk mendapatkan semua order
-    @GET("order/getAllOrders") // Sesuaikan endpoint ini dengan API Anda
+    @GET("OrderApi.php") // Sesuaikan endpoint ini dengan API Anda
     Call<OrdersResponse> getAllOrders();
 
     @POST("CartApi.php")

@@ -13,30 +13,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AlertDialog;
 
 public class Profile_Fragment extends Fragment {
 
     // Deklarasi elemen UI
     private TextView usernameTextView, emailTextView;
     private ImageView profileImageView;
-
-    public Profile_Fragment() {
-        // Required empty public constructor
-    }
-
-    public static Profile_Fragment newInstance(String param1, String param2) {
-        Profile_Fragment fragment = new Profile_Fragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        args.putString("param2", param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private Button btnSelectImage, logoutButton;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -53,6 +41,8 @@ public class Profile_Fragment extends Fragment {
         usernameTextView = view.findViewById(R.id.blackTextView);
         emailTextView = view.findViewById(R.id.grayTextView);
         profileImageView = view.findViewById(R.id.profileImageView);
+        btnSelectImage = view.findViewById(R.id.btnSelectImage);
+        logoutButton = view.findViewById(R.id.LogoutButton);
 
         // Ambil data dari SharedPreferences
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("UserProfile", requireContext().MODE_PRIVATE);
@@ -73,5 +63,41 @@ public class Profile_Fragment extends Fragment {
         } else {
             profileImageView.setImageResource(R.drawable.profil); // Gambar default jika URL kosong
         }
+
+        // Navigasi ke Edit Profil
+        btnSelectImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Ganti dengan aktivitas edit profil yang sesuai
+                Intent intent = new Intent(getActivity(), AddAccountActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Konfirmasi log out
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Konfirmasi")
+                        .setMessage("Apakah Anda yakin ingin keluar?")
+                        .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Hapus data dari SharedPreferences dan kembali ke login
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.clear();
+                                editor.apply();
+
+                                // Navigasi ke LoginActivity
+                                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                startActivity(intent);
+                                getActivity().finish(); // Tutup aktivitas ini
+                            }
+                        })
+                        .setNegativeButton("Tidak", null)
+                        .show();
+            }
+        });
     }
 }

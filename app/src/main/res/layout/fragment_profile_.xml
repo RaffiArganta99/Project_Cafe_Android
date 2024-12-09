@@ -55,27 +55,9 @@
         app:layout_constraintTop_toBottomOf="@id/imageView2" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/addAccountButton"
-        android:layout_width="318.672dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/persegi_panjang"
-        android:drawableLeft="@drawable/add_user_svgrepo_com"
-        android:drawablePadding="9dp"
-        android:gravity="center_vertical"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:text="Add Account"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnSelectImage" />
-
-    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/LogoutButton"
         android:layout_width="318.672dp"
         android:layout_height="50dp"
-        android:layout_marginTop="24dp"
         android:background="@drawable/persegi_panjang"
         android:drawableLeft="@drawable/log_out_circle_svgrepo_com"
         android:drawablePadding="9dp"
@@ -88,8 +70,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addAccountButton"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSelectImage"
+        app:layout_constraintVertical_bias="0.062" />
 
     <TextView
         android:id="@+id/titleTextView"

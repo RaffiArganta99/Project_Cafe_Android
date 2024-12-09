@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.coffeeshopapplication.Model.Order;
 import com.example.coffeeshopapplication.Model.OrdersResponse;
+import com.example.coffeeshopapplication.Retrofit.ApiClient;
 import com.example.coffeeshopapplication.adapter.OrderAdapter;
 import com.example.coffeeshopapplication.Interface_API.ApiService;
 
@@ -23,15 +24,11 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class History_Fragment extends Fragment {
 
     private RecyclerView recyclerView;
     private OrderAdapter orderAdapter;
-
-    private static final String BASE_URL = "http://192.168.1.13/CafeBonanza/app/controllers/api/"; // Ganti dengan URL API Anda
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,12 +48,7 @@ public class History_Fragment extends Fragment {
     }
 
     private void fetchOrders() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ApiService apiService = retrofit.create(ApiService.class);
+        ApiService apiService = ApiClient.getApiService();
 
         apiService.getAllOrders().enqueue(new Callback<OrdersResponse>() {
             @Override
