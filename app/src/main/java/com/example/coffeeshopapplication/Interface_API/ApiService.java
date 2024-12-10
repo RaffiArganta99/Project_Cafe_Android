@@ -2,6 +2,8 @@ package com.example.coffeeshopapplication.Interface_API;
 
 import com.example.coffeeshopapplication.Model.ApiResponse;
 import com.example.coffeeshopapplication.Model.CartResponse;
+import com.example.coffeeshopapplication.Model.CheckoutOrderRequest;
+import com.example.coffeeshopapplication.Model.CheckoutOrderResponse;
 import com.example.coffeeshopapplication.Model.DeleteCartRequest;
 import com.example.coffeeshopapplication.Model.MenuResponse;
 import com.example.coffeeshopapplication.Model.LoginResponse;
@@ -79,9 +81,10 @@ public interface ApiService {
     @HTTP(method = "DELETE", path = "CartApi.php", hasBody = true)
     Call<ApiResponse> deleteCart(@Body DeleteCartRequest request);
 
-
     // Menghapus semua item dari keranjang untuk CustomerId tertentu
     @DELETE("CartApi.php?action=delete-all")
     Call<ApiResponse> deleteAllCart(@Query("customerId") int customerId);
 
+    @POST("OrderApi.php")
+    Call<CheckoutOrderResponse> checkoutOrderFromCart(@Body CheckoutOrderRequest request);
 }

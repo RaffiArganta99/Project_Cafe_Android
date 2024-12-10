@@ -2,6 +2,7 @@ package com.example.coffeeshopapplication.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
@@ -25,10 +26,14 @@ import com.example.coffeeshopapplication.Model.DeleteCartRequest;
 import com.example.coffeeshopapplication.Model.UpdateCartRequest;
 import com.example.coffeeshopapplication.R;
 import com.example.coffeeshopapplication.Retrofit.ApiClient;
+import com.example.coffeeshopapplication.TransactionFragment;
 import com.example.coffeeshopapplication.TransactionItem;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,22 +80,28 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                 .error(R.drawable.default_image)
                 .into(holder.cartImageView);
 
-        // Mengatur klik listener untuk tombol-tombol
-        holder.plusButton.setOnClickListener(v -> listener.onQuantityChange(position, currentItem.getQuantity() + 1));
-        holder.minusButton.setOnClickListener(v -> listener.onQuantityChange(position, currentItem.getQuantity() - 1));
-        holder.deleteButton.setOnClickListener(v -> deleteItem(position));
-
+        // Tombol Plus dengan validasi dan update real-time
         holder.plusButton.setOnClickListener(v -> {
-            int quantityChange = 1; // Tambah 1
-            updateCartItem(position, quantityChange);
+            int currentQuantity = currentItem.getQuantity();
+            if (currentQuantity < currentItem.getStock()) {
+                updateCartItem(position, 1);
+            } else {
+                Toast.makeText(context, "Stok tidak mencukupi", Toast.LENGTH_SHORT).show();
+            }
         });
 
+        // Tombol Minus dengan validasi dan update real-time
         holder.minusButton.setOnClickListener(v -> {
-            int quantityChange = -1; // Kurangi 1
-            updateCartItem(position, quantityChange);
+            int currentQuantity = currentItem.getQuantity();
+            if (currentQuantity > 1) {
+                updateCartItem(position, -1);
+            } else {
+                Toast.makeText(context, "Jumlah minimal 1", Toast.LENGTH_SHORT).show();
+            }
         });
 
-
+        // Delete Button
+        holder.deleteButton.setOnClickListener(v -> deleteItem(position));
     }
 
     @Override
@@ -98,10 +109,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         return transactionItems.size();
     }
 
-    public void updateItem(int position, CartResponse.CartItem item) {
-        transactionItems.set(position, item);
-        notifyItemChanged(position);
-    }
 
     public void deleteItem(int position) {
         CartResponse.CartItem item = transactionItems.get(position);
@@ -145,41 +152,35 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         CartResponse.CartItem item = transactionItems.get(position);
         int newQuantity = item.getQuantity() + quantityChange;
 
-        // Validasi perubahan quantity
-        if (newQuantity < 1 || newQuantity > item.getStock()) {
-            Toast.makeText(context, "Quantity tidak valid", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Kirim request ke API
+        // Kirim request ke API untuk update cart
         UpdateCartRequest request = new UpdateCartRequest(customerId, item.getCartId(), quantityChange);
 
         apiService.updateCart(request).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Gunakan kuantitas yang dihitung secara lokal
+                    // Update lokal
                     item.setQuantity(newQuantity);
                     transactionItems.set(position, item);
-                    notifyItemChanged(position); // Memperbarui RecyclerView
+                    notifyItemChanged(position);
 
-                    Log.d("RecyclerViewUpdate", "Item at position " + position + " updated with quantity: " + newQuantity);
+                    // Panggil listener untuk refresh total
+                    if (listener != null) {
+                        listener.onQuantityChange(position, newQuantity);
+                    }
+
                     Toast.makeText(context, "Quantity berhasil diperbarui", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e("UpdateCart", "Response Error: " + response.message());
                     Toast.makeText(context, "Gagal memperbarui quantity", Toast.LENGTH_SHORT).show();
                 }
             }
 
-
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Log.e("UpdateCart", "Request Failed: " + t.getMessage());
                 Toast.makeText(context, "Kesalahan koneksi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
     public class TransactionViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView, priceTextView, quantityTextView, stockTextView;
@@ -202,5 +203,11 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 }
+
+
+
+
+
+
 
 
