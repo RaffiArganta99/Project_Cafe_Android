@@ -169,9 +169,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                         listener.onQuantityChange(position, newQuantity);
                     }
 
-                    Toast.makeText(context, "Quantity berhasil diperbarui", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "Quantity berhasil diperbarui", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(context, "Gagal memperbarui quantity", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "Gagal memperbarui quantity", Toast.LENGTH_SHORT).show();
                 }
             }
 

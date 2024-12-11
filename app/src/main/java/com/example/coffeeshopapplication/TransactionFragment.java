@@ -235,16 +235,3 @@ public class TransactionFragment extends Fragment {
         });
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

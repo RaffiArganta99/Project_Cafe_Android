@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
+import android.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -82,8 +82,43 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
         });
 
         fetchMenuFromApi();
+        // Tambahkan setup SearchView
+        setupSearchView();
 
         return binding.getRoot();
+    }
+
+    private void setupSearchView() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // Filter menu berdasarkan nama
+                filterMenuByName(newText);
+                return true;
+            }
+        });
+    }
+
+    private void filterMenuByName(String searchText) {
+        List<Menu> filteredList = new ArrayList<>();
+
+        // Pastikan fullMenuList tidak null
+        if (fullMenuList != null) {
+            for (Menu menu : fullMenuList) {
+                // Lakukan pencarian case-insensitive
+                if (menu.getMenuName().toLowerCase().contains(searchText.toLowerCase())) {
+                    filteredList.add(menu);
+                }
+            }
+
+            // Update adapter dengan daftar menu yang difilter
+            adapter.updateMenuList(filteredList);
+        }
     }
 
     private void fetchMenuFromApi() {

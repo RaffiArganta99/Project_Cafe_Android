@@ -1,55 +1,78 @@
 package com.example.coffeeshopapplication;
 
 import android.os.Bundle;
+import android.widget.FrameLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import com.example.coffeeshopapplication.databinding.ActivityFragmentMainBinding;
+
+import com.qamar.curvedbottomnaviagtion.CurvedBottomNavigation;
 
 public class FragmentMainActivity extends AppCompatActivity {
 
-    // Menggunakan binding yang sesuai dengan nama class dari ViewBinding
-    private ActivityFragmentMainBinding binding;
+    private CurvedBottomNavigation bottomNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_fragment_main);
 
-        // Inflate layout menggunakan ViewBinding
-        binding = ActivityFragmentMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        bottomNavigation = findViewById(R.id.bottomNavigationView);
 
-        // Set listener untuk BottomNavigationView agar merespon pilihan item yang di-klik
-        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
+        // Nonaktifkan fokus pada bottomNavigation
+        bottomNavigation.setFocusable(false);
+        bottomNavigation.setFocusableInTouchMode(false);
 
-            // Cek ID item yang dipilih, lalu ganti fragment yang sesuai
-            if (id == R.id.home_nav) {
-                replaceFragment(new ProductFragment());  // Ganti HomeFragment dengan TransactionFragment
-            } else if (id == R.id.product_nav) {
-                replaceFragment(new TransactionFragment());
-            } else if (id == R.id.add_nav) {
-                replaceFragment(new Add_Item_Fragment());
-            } else if (id == R.id.list_nav) {
-                replaceFragment(new History_Fragment());
-            } else if (id == R.id.profile_nav) {
-                replaceFragment(new Profile_Fragment());
+        // Tambahkan item navigasi
+        bottomNavigation.add(new CurvedBottomNavigation.Model(1, "Product", R.drawable.ic_home));
+        bottomNavigation.add(new CurvedBottomNavigation.Model(2, "Add", R.drawable.ic_add));
+        bottomNavigation.add(new CurvedBottomNavigation.Model(3, "Cart", R.drawable.ic_cart));
+        bottomNavigation.add(new CurvedBottomNavigation.Model(4, "History", R.drawable.ic_history));
+        bottomNavigation.add(new CurvedBottomNavigation.Model(5, "Profile", R.drawable.ic_profile));
+
+        // Set listener untuk navigasi
+        bottomNavigation.setOnClickMenuListener(model -> {
+            Fragment selectedFragment = null;
+            switch (model.getId()) {
+                case 1:
+                    selectedFragment = new ProductFragment();
+                    break;
+                case 2:
+                    selectedFragment = new Add_Item_Fragment();
+                    break;
+                case 3:
+                    selectedFragment = new TransactionFragment();
+                    break;
+                case 4:
+                    selectedFragment = new History_Fragment();
+                    break;
+                case 5:
+                    selectedFragment = new Profile_Fragment();
+                    break;
             }
-            return true;
+
+            if (selectedFragment != null) {
+                replaceFragment(selectedFragment);
+            }
+            return null;
         });
 
-        // Memuat fragment default ketika Activity pertama kali diluncurkan
-        if (savedInstanceState == null) {
-            replaceFragment(new ProductFragment()); // Fragment default adalah TransactionFragment
-        }
+        // Atur fragment default
+        replaceFragment(new ProductFragment());
+        bottomNavigation.show(1, true);
     }
 
-    // Metode untuk mengganti fragment yang ditampilkan di dalam frame layout
+    @Override
+    public void onResume() {
+        super.onResume();
+        FrameLayout frameLayout = findViewById(R.id.frame_layout);
+        frameLayout.requestFocus();
+    }
+
     private void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, fragment);
-        fragmentTransaction.commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_layout, fragment)
+                .commit();
     }
 }

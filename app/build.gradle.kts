@@ -18,6 +18,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
     viewBinding {
         var enabled = true
@@ -48,9 +49,8 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    // OkHttp Logging Interceptor
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
-
+    implementation ("com.github.qamarelsafadi:CurvedBottomNavigation:0.1.3")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("androidx.core:core:1.10.0") // pastikan versinya sesuai dengan yang terbaru
     implementation ("androidx.appcompat:appcompat:1.6.1") // pastikan versinya sesuai
@@ -58,5 +58,8 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     implementation("com.squareup.picasso:picasso:2.71828")
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    // Navigation Component
+
+
 
 }

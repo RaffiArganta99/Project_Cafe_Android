@@ -168,9 +168,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         });
     }
 
-
-
-
     @Override
     public int getItemCount() {
         return (cartItems != null) ? cartItems.size() : 0;
@@ -220,8 +217,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         // Memperbarui tampilan RecyclerView
         notifyDataSetChanged();
     }
-
-
 
     public class CartViewHolder extends RecyclerView.ViewHolder {
         private final CartItemBinding binding;

@@ -71,11 +71,9 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/dashboard_capsule"
         android:drawableLeft="@drawable/search_right_1505_svgrepo_com"
-        android:drawablePadding="12dp"
-        android:ems="10"
-        android:hint="Cari"
+        android:iconifiedByDefault="false"
         android:inputType="text"
-        android:paddingStart="24dp"
+        android:queryHint="Cari menu..."
         app:layout_constraintEnd_toEndOf="@+id/imageView17"
         app:layout_constraintStart_toStartOf="@+id/imageView17"
         app:layout_constraintTop_toBottomOf="@+id/textView23" />
