@@ -1,5 +1,7 @@
 package com.example.coffeeshopapplication;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -13,12 +15,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeeshopapplication.Interface_API.ApiService;
 import com.example.coffeeshopapplication.Interface_API.OnTransactionItemListener;
+import com.example.coffeeshopapplication.Model.ApiResponse;
 import com.example.coffeeshopapplication.Model.CartResponse;
 import com.example.coffeeshopapplication.Model.CheckoutOrderRequest;
 import com.example.coffeeshopapplication.Model.CheckoutOrderResponse;
@@ -42,11 +46,11 @@ public class TransactionFragment extends Fragment {
     private TransactionAdapter adapter;
     private List<CartResponse.CartItem> transactionItems;
     private int customerId = 1; // Pastikan ID sesuai dengan pengguna aktif.
+    private TextView deleteAllCartButton; // Changed to TextView
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_transaction, container, false);
-
 
         // Inisialisasi view
         totalText = rootView.findViewById(R.id.Total_text);
@@ -55,6 +59,7 @@ public class TransactionFragment extends Fragment {
         tunaiEditText = rootView.findViewById(R.id.editText_Tunai);
         konfirmasiButton = rootView.findViewById(R.id.konfirmasi_t);
         recyclerTransaction = rootView.findViewById(R.id.recyclerTransaction);
+        deleteAllCartButton = rootView.findViewById(R.id.delete_all);
 
         transactionItems = new ArrayList<>();
 
@@ -71,6 +76,13 @@ public class TransactionFragment extends Fragment {
             public void onDeleteItem(int position) {
                 // Reload entire cart data instead of manually removing
                 loadCartData();
+            }
+        });
+
+        deleteAllCartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteAllCartConfirmation();
             }
         });
 
@@ -115,6 +127,66 @@ public class TransactionFragment extends Fragment {
         loadCartData();
 
         return rootView;
+    }
+
+    private void showDeleteAllCartConfirmation() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Hapus Semua Item Keranjang")
+                .setMessage("Apakah Anda yakin ingin menghapus semua item dari keranjang?")
+                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteAllCart();
+                    }
+                })
+                .setNegativeButton("Tidak", null)
+                .show();
+    }
+
+    private void deleteAllCart() {
+        ProgressDialog progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setMessage("Menghapus semua item keranjang...");
+        progressDialog.show();
+
+        ApiService apiService = ApiClient.getApiService();
+        apiService.deleteAllCart(customerId).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                requireActivity().runOnUiThread(() -> {
+                    progressDialog.dismiss();
+
+                    if (response.isSuccessful() && response.body() != null) {
+                        // Log pesan response untuk debugging
+                        Log.d("DeleteAllCart", "Response Message: " + response.body().getMessage());
+
+                        // Modifikasi logika pengecekan keberhasilan
+                        if (response.body().getMessage().contains("successfully")) {
+                            transactionItems.clear();
+                            adapter.notifyDataSetChanged();
+
+                            // Reset UI elements
+                            if (totalText != null) totalText.setText(CurrencyUtils.formatToRupiah(0));
+                            if (kembalianText != null) kembalianText.setText("Rp0");
+                            if (tunaiEditText != null) tunaiEditText.setText("");
+
+                            Toast.makeText(requireContext(), "Berhasil menghapus semua item keranjang", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireContext(), "Gagal menghapus item keranjang", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Terjadi kesalahan", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                requireActivity().runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(requireContext(), "Gagal terhubung: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     private void loadCartData() {

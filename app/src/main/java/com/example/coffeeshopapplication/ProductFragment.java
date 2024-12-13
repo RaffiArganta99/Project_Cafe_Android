@@ -164,11 +164,3 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
         Toast.makeText(getContext(), "Selected: " + product.getName(), Toast.LENGTH_SHORT).show();
     }
 }
-
-
-
-
-
-
-
-

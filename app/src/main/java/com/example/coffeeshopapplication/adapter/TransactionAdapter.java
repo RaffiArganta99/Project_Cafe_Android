@@ -203,11 +203,3 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 }
-
-
-
-
-
-
-
-

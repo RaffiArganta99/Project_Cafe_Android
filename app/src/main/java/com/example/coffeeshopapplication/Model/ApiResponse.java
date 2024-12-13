@@ -13,7 +13,11 @@ public class ApiResponse {
     private Data data;
 
     public boolean isSuccess() {
-        return success;
+
+        // Periksa berdasarkan pesan atau kondisi lain
+        return message != null &&
+                (message.contains("success") ||
+                        message.contains("successfully"));
     }
 
     public void setSuccess(boolean success) {

@@ -27,7 +27,7 @@
         <activity
             android:name=".FragmentMainActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name=".AdditemActivity"
             android:exported="false" />

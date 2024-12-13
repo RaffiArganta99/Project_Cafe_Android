@@ -349,6 +349,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .show();
         }
 
+        public void clearCart() {
+            cartItems.clear(); // Asumsikan `cartItems` adalah daftar yang digunakan untuk menyimpan item di keranjang
+            notifyDataSetChanged();
+        }
+
+
         private void syncMenuData() {
             apiService.getMenu().enqueue(new Callback<MenuResponse>() {
                 @Override

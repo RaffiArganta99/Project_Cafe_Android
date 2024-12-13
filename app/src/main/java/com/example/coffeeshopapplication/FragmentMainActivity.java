@@ -1,6 +1,7 @@
 package com.example.coffeeshopapplication;
 
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,9 @@ public class FragmentMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_main);
+
+        // Nonaktifkan pergeseran layout saat keyboard muncul
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         bottomNavigation = findViewById(R.id.bottomNavigationView);
 
