@@ -81,12 +81,19 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
             }
         });
 
+        // Tambahkan OnClickListener untuk BellNotif
+        binding.BellNotif.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), StockStatusActivity.class);
+            startActivity(intent);
+        });
+
         fetchMenuFromApi();
         // Tambahkan setup SearchView
         setupSearchView();
 
         return binding.getRoot();
     }
+
 
     private void setupSearchView() {
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

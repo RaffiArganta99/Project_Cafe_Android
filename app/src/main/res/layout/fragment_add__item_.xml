@@ -24,17 +24,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/BellNotif"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/bell_ring_svgrepo_com__1_"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"

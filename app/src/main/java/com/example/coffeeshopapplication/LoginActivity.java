@@ -1,6 +1,8 @@
 package com.example.coffeeshopapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,14 +14,18 @@ import com.example.coffeeshopapplication.Model.LoginResponse;
 import com.example.coffeeshopapplication.Retrofit.ApiClient;
 import com.example.coffeeshopapplication.Interface_API.ApiService;
 import com.example.coffeeshopapplication.databinding.ActivityLogin2Binding;
-
+import android.text.InputType;
+import android.view.MotionEvent;
+import android.widget.EditText;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class LoginActivity extends AppCompatActivity {
     private ActivityLogin2Binding binding;
     private ApiService apiService;
+    private boolean isPasswordVisible = false; // Variabel untuk melacak status visibilitas
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +36,14 @@ public class LoginActivity extends AppCompatActivity {
         // Inisialisasi ApiService
         apiService = ApiClient.getApiService();
 
+        // Tambahkan logika visibilitas kata sandi
+        setupPasswordVisibilityToggle(binding.editTextTextPassword);
+
         binding.loginbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = binding.editTextTextEmailAddress.getText().toString().trim();
                 String password = binding.editTextTextPassword.getText().toString().trim();
-
 
                 if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Email atau password tidak boleh kosong!", Toast.LENGTH_SHORT).show();
@@ -45,14 +53,56 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        binding.donthavebutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SignActivity.class);
-                startActivity(intent);
+//        binding.donthavebutton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(LoginActivity.this, SignActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupPasswordVisibilityToggle(EditText passwordEditText) {
+        passwordEditText.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                // Periksa apakah sentuhan terjadi pada drawableEnd (kanan)
+                Drawable[] drawables = passwordEditText.getCompoundDrawables();
+                Drawable rightDrawable = drawables[2]; // Drawable kanan (visibility toggle)
+
+                if (rightDrawable != null) { // Pastikan drawable kanan tidak null
+                    if (event.getX() >= (passwordEditText.getRight() - passwordEditText.getPaddingRight() - rightDrawable.getIntrinsicWidth())) {
+                        Drawable leftDrawable = drawables[0]; // Drawable kiri (ic_lock)
+                        Drawable topDrawable = drawables[1]; // Drawable atas (jika ada)
+                        Drawable bottomDrawable = drawables[3]; // Drawable bawah (jika ada)
+
+                        // Ubah visibilitas kata sandi
+                        if (isPasswordVisible) {
+                            // Mode password tersembunyi
+                            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                            rightDrawable = getResources().getDrawable(R.drawable.ic_visibility_off, null);
+                            isPasswordVisible = false;
+                        } else {
+                            // Mode password terlihat
+                            passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                            rightDrawable = getResources().getDrawable(R.drawable.ic_visibility_on, null);
+                            isPasswordVisible = true;
+                        }
+
+                        // Pasang kembali semua drawable
+                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(leftDrawable, topDrawable, rightDrawable, bottomDrawable);
+
+                        // Pindahkan kursor ke akhir teks
+                        passwordEditText.setSelection(passwordEditText.getText().length());
+
+                        return true; // Mencegah event diteruskan lebih lanjut
+                    }
+                }
             }
+            return false;
         });
     }
+
 
     private void loginUser(String Email, String Password) {
         Call<LoginResponse> call = apiService.login("login", Email, Password);
@@ -68,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Simpan data profil ke SharedPreferences
                         getSharedPreferences("UserProfile", MODE_PRIVATE)
                                 .edit()
-                                .putInt("EmployeeId", loginResponse.getUser().getEmployeeId()) // Simpan int
+                                .putInt("EmployeeId", loginResponse.getUser().getEmployeeId())
                                 .putString("Username", loginResponse.getUser().getUsername())
                                 .putString("Email", loginResponse.getUser().getEmail())
                                 .putString("Role", loginResponse.getUser().getRole())
@@ -99,3 +149,4 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 }
+

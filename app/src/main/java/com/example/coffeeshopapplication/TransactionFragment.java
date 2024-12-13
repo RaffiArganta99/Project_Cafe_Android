@@ -48,6 +48,7 @@ public class TransactionFragment extends Fragment {
     private int customerId = 1; // Pastikan ID sesuai dengan pengguna aktif.
     private TextView deleteAllCartButton; // Changed to TextView
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_transaction, container, false);

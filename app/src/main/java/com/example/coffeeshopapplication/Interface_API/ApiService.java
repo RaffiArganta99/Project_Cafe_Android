@@ -9,6 +9,7 @@ import com.example.coffeeshopapplication.Model.MenuResponse;
 import com.example.coffeeshopapplication.Model.LoginResponse;
 import com.example.coffeeshopapplication.Model.OrdersResponse;
 import com.example.coffeeshopapplication.Model.ResponseUpdate;
+import com.example.coffeeshopapplication.Model.StockStatusResponse;
 import com.example.coffeeshopapplication.Model.UpdateCartRequest;
 
 import java.util.Map;
@@ -30,6 +31,12 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ApiService {
+
+    @GET("MenuApi.php")
+    Call<StockStatusResponse> getStockStatus(
+            @Query("action") String action,
+            @Query("threshold") Integer threshold
+    );
 
     // API untuk Menu
     @GET("MenuApi.php")

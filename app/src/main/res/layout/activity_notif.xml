@@ -4,12 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F5F5"
-    tools:context=".History_Fragment">
+    android:background="#F6F5F5">
 
     <ImageView
-
-        android:id="@+id/imageView29"
+        android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
@@ -19,38 +17,36 @@
         app:srcCompat="@drawable/rectangle_572" />
 
     <TextView
-        android:id="@+id/textView25"
+        android:id="@+id/textView24"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Riwayat"
+        android:text="Notifikasi"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView29"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView29" />
+        app:layout_constraintStart_toStartOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/imageView3" />
 
-    <TextView
-        android:id="@+id/textView34"
+    <ImageButton
+        android:id="@+id/imageButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="  Pesanan Terakhir Pelanggan  "
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@+id/imageView29"
-        app:layout_constraintTop_toBottomOf="@+id/imageView29" />
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/arrow_back_circle_svgrepo_com" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/HistoryRecyclerView"
+        android:id="@+id/recyclerViewStockStatus"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView34" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
