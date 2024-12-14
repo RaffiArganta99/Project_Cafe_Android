@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.coffeeshopapplication"
+    namespace = "com.example.Bonanza"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.coffeeshopapplication"
+        applicationId = "com.example.Bonanza"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
