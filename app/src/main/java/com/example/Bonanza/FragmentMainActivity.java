@@ -18,8 +18,9 @@ public class FragmentMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_main);
 
-        // Nonaktifkan pergeseran layout saat keyboard muncul
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        // Ganti dengan mode yang memungkinkan penyesuaian layout
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
 
         bottomNavigation = findViewById(R.id.bottomNavigationView);
 

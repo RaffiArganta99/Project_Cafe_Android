@@ -14,7 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.graphics.Rect;
+import android.view.ViewTreeObserver;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -117,6 +118,25 @@ public class TransactionFragment extends Fragment {
                     calculateChange();
 
                     tunaiEditText.addTextChangedListener(this);
+                }
+            }
+        });
+
+        // Pastikan EditText tidak terhalang
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                rootView.getWindowVisibleDisplayFrame(r);
+                int screenHeight = rootView.getRootView().getHeight();
+                int keypadHeight = screenHeight - r.bottom;
+
+                // Jika keyboard muncul
+                if (keypadHeight > screenHeight * 0.15) {
+                    tunaiEditText.post(() -> {
+                        // Scroll ke EditText jika perlu
+                        tunaiEditText.requestFocus();
+                    });
                 }
             }
         });

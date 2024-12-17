@@ -73,7 +73,7 @@
                 android:layout_marginEnd="16dp"
                 android:alpha="0.6"
                 android:text="Total"
-                android:textColor="@color/black"
+                android:textColor="#26B82B"
                 android:textSize="14sp"
                 android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"

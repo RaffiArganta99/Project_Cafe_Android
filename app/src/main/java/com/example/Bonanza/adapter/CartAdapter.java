@@ -9,12 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import java.text.NumberFormat;
+import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.Bonanza.EditMenuDialogFragment;
 import com.example.Bonanza.Interface_API.ApiService;
 import com.example.Bonanza.Model.ApiResponse;
@@ -26,15 +26,14 @@ import com.example.Bonanza.Retrofit.ApiClient;
 import com.example.Bonanza.databinding.CartItemBinding;
 import com.example.Bonanza.Model.Menu;
 import com.squareup.picasso.Picasso;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
@@ -87,8 +86,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                             : "Unknown"
             );
 
-            // Menampilkan harga
-            holder.cartItemPrice.setText(String.format("Rp %.2f", currentProduct.getPrice()));
+            // Format price using Indonesian currency
+            holder.cartItemPrice.setText(formatRupiah(currentProduct.getPrice()));
 
             // Menampilkan stok
             holder.cartItemStock.setText(String.valueOf(currentProduct.getStock()));
@@ -128,6 +127,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         } else {
             Log.e("CartAdapter", "Cart items list is null or index out of bounds");
         }
+    }
+
+    // Helper method to format Rupiah
+    private String formatRupiah(double amount) {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+
+        // Format and remove decimal and currency symbol
+        String formattedPrice = formatter.format(amount)
+                .replace("Rp", "")  // Remove default currency symbol
+                .split(",")[0]      // Remove decimal part
+                .trim();
+
+        return "Rp" + formattedPrice;
     }
 
     // Mengambil customerId dari SharedPreferences
@@ -353,7 +365,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             cartItems.clear(); // Asumsikan `cartItems` adalah daftar yang digunakan untuk menyimpan item di keranjang
             notifyDataSetChanged();
         }
-
 
         private void syncMenuData() {
             apiService.getMenu().enqueue(new Callback<MenuResponse>() {

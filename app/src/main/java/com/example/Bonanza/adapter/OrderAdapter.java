@@ -4,13 +4,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.Bonanza.Model.Order;
 import com.example.Bonanza.R;
-
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
@@ -31,20 +30,32 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        Order order = orderList.get(position);
+        // Reverse the position to display in descending order
+        Order order = orderList.get(orderList.size() - 1 - position);
 
-        // Set data ke TextView sesuai dengan ID di layout XML
-        holder.textViewOrderId.setText("ID: " + order.getOrderId());
-        holder.textViewTotal.setText("Total: Rp " + order.getTotal());
-        holder.textViewCreatedAt.setText("Tanggal: " + order.getCreatedAt()); // Mengubah "Created At" menjadi "Tanggal"
-        holder.textViewStatus.setText(order.getStatus()); // Menghilangkan "ID" pada status
+        // Format Order ID in descending order
+        holder.textViewOrderId.setText("ID: " + (orderList.size() - position));
+
+        // Format total amount with Indonesian currency formatting
+        holder.textViewTotal.setText("Total: Rp" + formatRupiah(order.getTotal()));
+        holder.textViewCreatedAt.setText("Tanggal: " + order.getCreatedAt());
+        holder.textViewStatus.setText(order.getStatus());
         holder.textViewPaymentMethod.setText("Payment: " + order.getPaymentMethod());
-
     }
 
     @Override
     public int getItemCount() {
         return orderList.size();
+    }
+
+    // Helper method to format Rupiah
+    private String formatRupiah(double amount) {
+        // Remove decimal part for simplicity
+        int intAmount = (int) amount;
+
+        // Use NumberFormat to add thousand separators
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("id", "ID"));
+        return formatter.format(intAmount);
     }
 
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
