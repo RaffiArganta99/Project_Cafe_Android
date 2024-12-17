@@ -34,11 +34,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         Order order = orderList.get(position);
 
         // Set data ke TextView sesuai dengan ID di layout XML
-        holder.textViewOrderId.setText("Id Order: " + order.getOrderId());
+        holder.textViewOrderId.setText("ID: " + order.getOrderId());
         holder.textViewTotal.setText("Total: Rp " + order.getTotal());
-        holder.textViewCreatedAt.setText("Created At: " + order.getCreatedAt());
-        holder.textViewStatus.setText("Status: " + order.getStatus());
+        holder.textViewCreatedAt.setText("Tanggal: " + order.getCreatedAt()); // Mengubah "Created At" menjadi "Tanggal"
+        holder.textViewStatus.setText(order.getStatus()); // Menghilangkan "ID" pada status
         holder.textViewPaymentMethod.setText("Payment: " + order.getPaymentMethod());
+
     }
 
     @Override
