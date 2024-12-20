@@ -41,6 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:fontFamily="@font/alexandria"
                 android:text="1"
                 app:layout_constraintBottom_toBottomOf="@+id/plusButton"
                 app:layout_constraintStart_toEndOf="@+id/minusButton"
@@ -48,8 +49,8 @@
 
             <ImageButton
                 android:id="@+id/minusButton"
-                android:layout_width="23.4dp"
-                android:layout_height="23.4dp"
+                android:layout_width="25.4dp"
+                android:layout_height="25.4dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/minus_square_svgrepo_com"
@@ -58,8 +59,8 @@
 
             <ImageButton
                 android:id="@+id/plusButton"
-                android:layout_width="23.4dp"
-                android:layout_height="23.4dp"
+                android:layout_width="25.4dp"
+                android:layout_height="25.4dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/plus_square_svgrepo_com"
                 app:layout_constraintBottom_toBottomOf="@+id/minusButton"
@@ -84,6 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:fontFamily="@font/alexandria"
                 android:text="TextView"
                 android:textSize="18sp"
                 app:layout_constraintStart_toEndOf="@+id/cartImage"
@@ -94,22 +96,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:fontFamily="@font/alexandria"
                 android:text="TextView"
                 android:textColor="#26B82B"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/cartImage"
-                app:layout_constraintStart_toEndOf="@+id/cartImage" />
+                app:layout_constraintStart_toEndOf="@+id/cartImage"
+                app:layout_constraintTop_toBottomOf="@+id/minusButton" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/ItemCart"
-                android:layout_width="72.48dp"
-                android:layout_height="27.56dp"
+                android:layout_width="80.6dp"
+                android:layout_height="33.45dp"
                 android:background="@drawable/black_capsule_2"
+                android:fontFamily="@font/alexandria"
                 android:text="Keranjang"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -118,9 +123,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cartItemPrice"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/mdi__pencil_box" />
+                app:srcCompat="@android:drawable/screen_background_light_transparent" />
 
             <TextView
                 android:id="@+id/cartItemCategory"

@@ -54,7 +54,7 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
         binding.cartRecyclerView.setAdapter(adapter);
 
         // Setup Spinner
-        List<String> categories = Arrays.asList("All Menu", "Food", "Drink");
+        List<String> categories = Arrays.asList("Semua", "Makanan", "Minuman");
         ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerCategory.setAdapter(adapterSpinner);

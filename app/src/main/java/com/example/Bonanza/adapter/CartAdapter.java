@@ -197,14 +197,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             try {
                 priceValue = Double.parseDouble(menu.getPrice()); // Menggunakan Double.parseDouble
             } catch (NumberFormatException e) {
-                Log.e("CartAdapter", "Failed to parse menu price: " + menu.getPrice(), e);
+                Log.e("CartAdapter", "Gagal mengurai harga menu: " + menu.getPrice(), e);
             }
 
             // Parsing stok dari String ke integer
             try {
                 stockValue = Integer.parseInt(menu.getStock()); // Tetap menggunakan Integer.parseInt
             } catch (NumberFormatException e) {
-                Log.e("CartAdapter", "Failed to parse menu stock: " + menu.getStock(), e);
+                Log.e("CartAdapter", "Gagal mengurai stok menu: " + menu.getStock(), e);
             }
 
             String category = menu.getCategory();
@@ -305,7 +305,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     if (response.isSuccessful()) {
                         // Jika berhasil, cek pesan dan update UI jika stok berhasil diubah
                         if (response.body() != null && response.body().getMessage() != null && response.body().getMessage().equals("Stock updated successfully")) {
-                            Log.d("CartAdapter", "Stock updated successfully.");
+                            Log.d("CartAdapter", "Stok berhasil diperbarui.");
                             // Perbarui UI atau beri notifikasi jika diperlukan
                         } else {
                             Log.e("CartAdapter", "Error: " + response.body().getMessage());
@@ -329,9 +329,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
             // Menampilkan dialog konfirmasi sebelum menghapus
             new AlertDialog.Builder(context)
-                    .setTitle("Confirm Deletion")
-                    .setMessage("Are you sure you want to delete this item?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
+                    .setTitle("Konfirmasi Penghapusan")
+                    .setMessage("Apakah Anda yakin ingin menghapus item ini?")
+                    .setPositiveButton("Ya.", (dialog, which) -> {
                         // Jika pengguna mengkonfirmasi penghapusan
                         apiService. deleteCartItem(product.getId()).enqueue(new Callback<Void>() {
                             @Override

@@ -29,11 +29,11 @@ public class FragmentMainActivity extends AppCompatActivity {
         bottomNavigation.setFocusableInTouchMode(false);
 
         // Tambahkan item navigasi
-        bottomNavigation.add(new CurvedBottomNavigation.Model(1, "Product", R.drawable.ic_home));
-        bottomNavigation.add(new CurvedBottomNavigation.Model(2, "Add", R.drawable.ic_add));
-        bottomNavigation.add(new CurvedBottomNavigation.Model(3, "Cart", R.drawable.ic_cart));
-        bottomNavigation.add(new CurvedBottomNavigation.Model(4, "History", R.drawable.ic_history));
-        bottomNavigation.add(new CurvedBottomNavigation.Model(5, "Profile", R.drawable.ic_profile));
+        bottomNavigation.add(new CurvedBottomNavigation.Model(1, "Produk", R.drawable.ic_home));
+        bottomNavigation.add(new CurvedBottomNavigation.Model(2, "Tambah", R.drawable.ic_add));
+        bottomNavigation.add(new CurvedBottomNavigation.Model(3, "Transaksi", R.drawable.ic_cart));
+        bottomNavigation.add(new CurvedBottomNavigation.Model(4, "Riwayat", R.drawable.ic_history));
+        bottomNavigation.add(new CurvedBottomNavigation.Model(5, "Profil", R.drawable.ic_profile));
 
         // Set listener untuk navigasi
         bottomNavigation.setOnClickMenuListener(model -> {

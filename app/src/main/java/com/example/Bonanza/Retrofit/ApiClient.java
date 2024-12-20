@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class ApiClient {
-    private static final String BASE_URL = "http://192.168.1.7/CafeBonanza/app/controllers/api/";
+    private static final String BASE_URL = "https://wstif23.myhost.id/kelas_bws/cafe-bonanza/CafeBonanza/app/controllers/api/";
     private static Retrofit retrofit;
 
     public static ApiService getApiService() {

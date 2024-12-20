@@ -44,7 +44,7 @@ public class StockStatusAdapter extends RecyclerView.Adapter<StockStatusAdapter.
         holder.stockTextView.setText("Stock: " + item.getStock());
 
         // Set additional text (could be a warning message)
-        holder.additionalTextView.setText(item.getStock() <= 5 ? "Low Stock Alert!" : "Stock Needs Attention");
+        holder.additionalTextView.setText(item.getStock() <= 5 ? "Peringatan Stok Rendah!" : "Stok Perlu Diperhatikan");
 
         Picasso.get()
                 .load(item.getImageUrl())

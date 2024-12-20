@@ -111,13 +111,13 @@ public class Add_Item_Fragment extends Fragment {
         // Validasi input
         if (TextUtils.isEmpty(menuName) || TextUtils.isEmpty(priceStr) || TextUtils.isEmpty(stockStr) ||
                 TextUtils.isEmpty(description) || imageUri == null) {
-            Toast.makeText(getContext(), "Please fill in all fields and select an image.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Silakan isi semua bidang dan pilih gambar.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (TextUtils.isEmpty(priceStr.trim()) || TextUtils.isEmpty(stockStr.trim()) ||
                 !TextUtils.isDigitsOnly(priceStr) || !TextUtils.isDigitsOnly(stockStr)) {
-            Toast.makeText(getContext(), "Price and Stock must be numeric and not empty.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Harga dan Stok harus berupa angka dan tidak boleh kosong.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -136,7 +136,7 @@ public class Add_Item_Fragment extends Fragment {
 
         // Validasi harga dan stok agar lebih besar dari 0
         if (price <= 0 || stock <= 0) {
-            Toast.makeText(getContext(), "Price and Stock must be positive numbers.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Harga dan Stok harus berupa angka positif.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -183,7 +183,7 @@ public class Add_Item_Fragment extends Fragment {
                     Log.d("AddMenu", "Server Response: " + responseString);
 
                     if (response.isSuccessful()) {
-                        Toast.makeText(getContext(), "Menu added successfully!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Menu berhasil ditambahkan!", Toast.LENGTH_SHORT).show();
                         resetForm();
                     } else {
                         // Log error body

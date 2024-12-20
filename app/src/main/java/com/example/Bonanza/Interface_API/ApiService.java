@@ -32,18 +32,18 @@ import retrofit2.http.Query;
 
 public interface ApiService {
 
-    @GET("MenuApi.php")
+    @GET("MenusApi.php")
     Call<StockStatusResponse> getStockStatus(
             @Query("action") String action,
             @Query("threshold") Integer threshold
     );
 
     // API untuk Menu
-    @GET("MenuApi.php")
+    @GET("MenusApi.php")
     Call<MenuResponse> getMenu();
 
     @Multipart
-    @POST("MenuApi.php")
+    @POST("MenusApi.php")
     Call<ResponseBody> addMenu(
             @Part("MenuName") RequestBody menuName,
             @Part("Description") RequestBody description,
@@ -53,13 +53,13 @@ public interface ApiService {
             @Part MultipartBody.Part imageUrl
     );
 
-    @PUT("MenuApi.php")
+    @PUT("MenusApi.php")
     Call<ResponseUpdate> updateMenu(
             @Query("id") int id,
             @Body Map<String, Object> productUpdate
     );
 
-    @DELETE("MenuApi.php")
+    @DELETE("MenusApi.php")
     Call<Void> deleteCartItem(@Query("id") int id);
 
     // Endpoint untuk login menggunakan parameter FormUrlEncoded
@@ -95,3 +95,4 @@ public interface ApiService {
     @POST("OrderApi.php")
     Call<CheckoutOrderResponse> checkoutOrderFromCart(@Body CheckoutOrderRequest request);
 }
+
