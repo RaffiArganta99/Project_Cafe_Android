@@ -53,34 +53,6 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
         binding.cartRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.cartRecyclerView.setAdapter(adapter);
 
-        // Setup Spinner
-        List<String> categories = Arrays.asList("Semua", "Makanan", "Minuman");
-        ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
-        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinnerCategory.setAdapter(adapterSpinner);
-
-        binding.spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedCategory = parent.getItemAtPosition(position).toString();
-                List<Menu> filteredList = new ArrayList<>();
-
-                for (Menu menu : fullMenuList) {
-                    if (selectedCategory.equalsIgnoreCase("All Menu") ||
-                            menu.getCategory().trim().equalsIgnoreCase(selectedCategory.trim())) {
-                        filteredList.add(menu);
-                    }
-                }
-
-                adapter.updateMenuList(filteredList);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                adapter.updateMenuList(fullMenuList);
-            }
-        });
-
         // Tambahkan OnClickListener untuk BellNotif
         binding.BellNotif.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), StockStatusActivity.class);
@@ -94,6 +66,50 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
         return binding.getRoot();
     }
 
+    private void setupSpinner() {
+        List<String> categories = Arrays.asList("Semua", "Makanan", "Minuman");
+        ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerCategory.setAdapter(adapterSpinner);
+
+        binding.spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCategory = parent.getItemAtPosition(position).toString().trim(); // Trim untuk menghapus spasi
+                List<Menu> filteredList = new ArrayList<>();
+
+                if (selectedCategory.equalsIgnoreCase("Semua")) {
+                    filteredList.addAll(fullMenuList); // Tampilkan semua item
+                } else {
+                    for (Menu menu : fullMenuList) {
+                        if (menu.getCategory() != null &&
+                                menu.getCategory().trim().equalsIgnoreCase(selectedCategory)) {
+                            filteredList.add(menu);
+                        }
+                    }
+                }
+
+                adapter.updateMenuList(filteredList);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                adapter.updateMenuList(fullMenuList); // Default ke semua item
+            }
+        });
+    }
+
+    // Metode mapCategory
+    private String mapCategory(String apiCategory) {
+        switch (apiCategory.toLowerCase().trim()) {
+            case "food":
+                return "Makanan";
+            case "drink":
+                return "Minuman";
+            default:
+                return "Lainnya";
+        }
+    }
 
     private void setupSearchView() {
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -134,8 +150,16 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
             public void onResponse(Call<MenuResponse> call, Response<MenuResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     fullMenuList.clear();
-                    fullMenuList.addAll(response.body().getMenuList());
+
+                    // Terapkan mapCategory ke setiap menu
+                    for (Menu menu : response.body().getMenuList()) {
+                        menu.setCategory(mapCategory(menu.getCategory())); // Mapping kategori
+                        fullMenuList.add(menu);
+                    }
+
                     adapter.updateMenuList(fullMenuList);
+                    adapter.notifyDataSetChanged();
+                    setupSpinner();
                 } else {
                     Log.e("ProductFragment", "API Response failed: " + response.message());
                 }
@@ -147,6 +171,8 @@ public class ProductFragment extends Fragment implements CartAdapter.OnAddToCart
             }
         });
     }
+
+
 
     private int getCustomerId() {
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
